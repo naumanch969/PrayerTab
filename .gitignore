@@ -1,0 +1,14 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+
+
+.agent
+
+sample.html
+tabsaver_logo_system.html
+tab_saver_product_plan.html
+
+*.zip
