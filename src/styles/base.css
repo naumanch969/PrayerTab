@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --glass-bg:     rgba(10, 8, 5, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-hover:  rgba(255, 255, 255, 0.04);
+
+  --t1:    #f4f0e8;
+  --t2:    #b8b4ab;
+  --t3:    #7a7670;
+
+  --gold:       #d4a843;
+  --gold-dim:   rgba(212, 168, 67, 0.15);
+  --gold-glow:  rgba(212, 168, 67, 0.30);
+
+  --green:      #4caf7d;
+  --green-dim:  rgba(76, 175, 125, 0.18);
+  --red:        #e06060;
+
+  --radius:    16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--t1);
+  background: #0a0805;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea { font-family: inherit; }
+

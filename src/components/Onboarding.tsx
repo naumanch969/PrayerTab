@@ -56,6 +56,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       onboardingComplete: true,
       hasSeenCustomizePrompt: false,
       enabledWidgets: [],
+      widgetLayouts: {},
+      widgetPreferences: {},
     });
   };
 

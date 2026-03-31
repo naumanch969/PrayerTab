@@ -47,6 +47,8 @@ const DEFAULT_SETTINGS: UserSettings = {
   onboardingComplete: false,
   hasSeenCustomizePrompt: false,
   enabledWidgets: [],
+  widgetLayouts: {},
+  widgetPreferences: {},
 };
 
 const DEFAULT_INTENTION: Intention = { text: '', date: todayIso() };

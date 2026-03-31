@@ -18,6 +18,19 @@ export type WidgetId =
   | 'bookmarks'
   | 'note';
 
+export interface WidgetLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export type WidgetDisplayMode = 'auto' | 'compact' | 'expanded';
+
+export interface WidgetPreference {
+  displayMode: WidgetDisplayMode;
+}
+
 export type CalculationMethod =
   | 'MWL'
   | 'ISNA'
@@ -66,6 +79,8 @@ export interface UserSettings {
   onboardingComplete: boolean;
   hasSeenCustomizePrompt: boolean;
   enabledWidgets: WidgetId[];
+  widgetLayouts: Partial<Record<WidgetId, WidgetLayout>>;
+  widgetPreferences: Partial<Record<WidgetId, WidgetPreference>>;
 }
 
 // ── Streak & Prayer Log ───────────────────────────────────────────────────────
