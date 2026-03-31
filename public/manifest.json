@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "5PrayerTab",
-  "description": "Every tab, a new intention. Prayer times, daily Ayah, and mindful focus for Muslims.",
+  "name": "PrayerTab",
+  "short_name": "PrayerTab",
+  "description": "A spiritual new-tab experience for Muslims with prayer times, Quran reflection, and intentional daily focus.",
   "version": "1.0.0",
+  "minimum_chrome_version": "114",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
@@ -14,12 +16,13 @@
   },
   "permissions": [
     "storage",
-    "alarms",
     "geolocation"
   ],
   "host_permissions": [
     "https://images.unsplash.com/*",
-    "https://nominatim.openstreetmap.org/*"
+    "https://nominatim.openstreetmap.org/*",
+    "https://api.open-meteo.com/*",
+    "https://loremflickr.com/*"
   ],
   "background": {
     "service_worker": "background.js",

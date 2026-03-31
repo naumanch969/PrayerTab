@@ -1,10 +1,18 @@
 {
-  "name": "5prayertab",
-  "displayName": "5PrayerTab",
+  "name": "PrayerTab",
+  "displayName": "PrayerTab",
   "version": "1.0.0",
-  "description": "A new tab extension to set your daily intentions.",
+  "description": "A spiritual new-tab extension for Muslims with prayer times, reflection widgets, and intentional focus.",
   "author": "Nauman Chaudhry",
   "license": "MIT",
+  "keywords": [
+    "chrome-extension",
+    "new-tab",
+    "islam",
+    "prayer-times",
+    "productivity",
+    "quran"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

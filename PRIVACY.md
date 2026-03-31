@@ -1,11 +1,11 @@
-# Privacy Policy for 5PrayerTab
+# Privacy Policy for PrayerTab
 
 **Last Updated: April 1, 2026**
 
-5PrayerTab is committed to protecting user privacy. This policy explains what data is stored locally and when external requests are made.
+PrayerTab is committed to protecting user privacy. This policy explains what data is stored locally and when external requests are made.
 
 ## 1. Purpose
-5PrayerTab is a spiritual productivity new-tab extension that helps users track prayer-related information and daily reflection widgets.
+PrayerTab is a spiritual productivity new-tab extension that helps users track prayer-related information and daily reflection widgets.
 
 ## 2. Data Storage
 - User settings, widget layouts, prayer logs, dhikr state, and intention text are stored locally in browser storage.
@@ -23,7 +23,6 @@ These requests are used only to render requested features in the user interface.
 ## 4. Permissions
 - `storage`: persist settings and widget state locally.
 - `geolocation`: determine user coordinates for prayer times and weather.
-- `alarms`: reserved for periodic extension tasks.
 
 ## 5. No Remote Code Execution
 The extension does not execute remote scripts as application logic.

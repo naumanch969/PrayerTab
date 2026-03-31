@@ -1,4 +1,4 @@
-// 5PrayerTab background script
+// PrayerTab background script
 // Currently initialized as an empty module
 
 export {};

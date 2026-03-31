@@ -293,8 +293,8 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
 
         {tab === 'about' && (
           <div className="settings-about-wrapper">
-            <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
-            <h2 className="about-heading">5PrayerTab</h2>
+            <img src="/icons/icon128.png" alt="PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <h2 className="about-heading">PrayerTab</h2>
             <p className="about-version">Version 1.0.0</p>
             <p className="about-desc">A serene, focus-driven dashboard designed to keep your intentions, prayers, and daily reflections perfectly aligned throughout the day.</p>
             <div className="about-links">
@@ -302,7 +302,7 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
               <span className="dot-sep">•</span>
               <a href="#" className="about-link">Terms of Service</a>
               <span className="dot-sep">•</span>
-              <a href="https://github.com/your-repo/5PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
+              <a href="https://github.com/your-repo/PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
             </div>
           </div>
         )}
@@ -311,13 +311,13 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
           <div className="settings-feedback-wrapper">
             <MessageCircle className="feedback-icon" size={48} />
             <h2 className="feedback-heading">We value your input</h2>
-            <p className="feedback-desc">Notice a bug? Have an idea for a new widget? We'd love to hear your thoughts to help us improve 5PrayerTab.</p>
+            <p className="feedback-desc">Notice a bug? Have an idea for a new widget? We'd love to hear your thoughts to help us improve PrayerTab.</p>
             <textarea
               className="settings-textarea"
               placeholder="Describe your suggestion or issue here..."
               rows={6}
             />
-            <button className="settings-action-btn primary full-width" onClick={() => window.open('mailto:support@example.com?subject=5PrayerTab Feedback')}>
+            <button className="settings-action-btn primary full-width" onClick={() => window.open('mailto:support@example.com?subject=PrayerTab Feedback')}>
               Send via Email
             </button>
           </div>
