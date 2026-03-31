@@ -16,10 +16,10 @@ import { WidgetSidebar } from './components/WidgetSidebar';
 
 const NewTab: React.FC = () => {
     const storage = useStorage();
-    const [showSettings, setShowSettings] = useState(false);
+    const [activeSettingsTab, setActiveSettingsTab] = useState<string | null>(null);
     const [showCustomizePrompt, setShowCustomizePrompt] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const [activeNav, setActiveNav] = useState<WidgetNavId | null>('salah');
     const [activeNavTop, setActiveNavTop] = useState(0);
     const [activeWidgetSettingsId, setActiveWidgetSettingsId] = useState<WidgetId | null>(null);
@@ -27,7 +27,8 @@ const NewTab: React.FC = () => {
     const promptSeenPersisted = useRef(false);
     const settingsRef = useRef<UserSettings | null>(null);
 
-    const bg = useMemo(() => getDailyBackground(new Date()), []);
+    const defaultBg = useMemo(() => getDailyBackground(new Date()), []);
+    const bg = storage.settings?.background || defaultBg;
 
     useEffect(() => {
         settingsRef.current = storage.settings ?? null;
@@ -171,7 +172,7 @@ const NewTab: React.FC = () => {
                 </div>
             )}
 
-            <button className="nt-settings-btn" onClick={() => setShowSettings(true)} title="Settings" aria-label="Settings">
+            <button className="nt-settings-btn" onClick={() => setActiveSettingsTab('settings')} title="Settings" aria-label="Settings">
                 ⚙
             </button>
 
@@ -219,7 +220,7 @@ const NewTab: React.FC = () => {
                 activeWidgets={activeWidgets}
                 onToggleSidebar={() => setSidebarOpen((current) => !current)}
                 onToggleCollapsed={() => setSidebarCollapsed((current) => !current)}
-                onOpenSettings={() => setShowSettings(true)}
+                onOpenSettings={(tabId) => setActiveSettingsTab(tabId)}
                 onAddWidget={addWidget}
                 activeNav={activeNav}
                 activeNavTop={activeNavTop}
@@ -230,11 +231,12 @@ const NewTab: React.FC = () => {
                 onClearActiveNav={() => setActiveNav(null)}
             />
 
-            {showSettings && (
+            {activeSettingsTab !== null && (
                 <SettingsPanel
+                    activeTab={activeSettingsTab}
                     settings={settings}
                     onSave={(updated: UserSettings) => storage.updateSettings(updated)}
-                    onClose={() => setShowSettings(false)}
+                    onClose={() => setActiveSettingsTab(null)}
                 />
             )}
         </div>

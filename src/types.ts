@@ -78,6 +78,7 @@ export interface UserSettings {
   location: Location | null;
   onboardingComplete: boolean;
   hasSeenCustomizePrompt: boolean;
+  background?: string;
   enabledWidgets: WidgetId[];
   widgetLayouts: Partial<Record<WidgetId, WidgetLayout>>;
   widgetPreferences: Partial<Record<WidgetId, WidgetPreference>>;

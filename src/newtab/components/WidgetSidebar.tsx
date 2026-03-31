@@ -31,7 +31,7 @@ interface WidgetSidebarProps {
     activeWidgets: WidgetId[];
     onToggleSidebar: () => void;
     onToggleCollapsed: () => void;
-    onOpenSettings: () => void;
+    onOpenSettings: (tabId: string) => void;
     onAddWidget: (widgetId: WidgetId) => void;
     activeNav: WidgetNavId | null;
     activeNavTop: number;
@@ -104,7 +104,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                                     <button
                                         key={nav.id}
                                         className="widget-nav-item widget-nav-item-muted"
-                                        onClick={onOpenSettings}
+                                        onClick={() => onOpenSettings(nav.id)}
                                     >
                                         <span className="widget-nav-icon-wrap muted">
                                             <nav.icon size={13} strokeWidth={2} />

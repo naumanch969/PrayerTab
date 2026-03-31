@@ -36,25 +36,35 @@ const WeatherWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
 
   useEffect(() => {
     const location = settings.location;
-    if (!location) return;
+    if (!location) {
+      setSnapshot(null);
+      return;
+    }
 
     const controller = new AbortController();
     const fetchWeather = async () => {
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto`;
         const res = await fetch(url, { signal: controller.signal });
-        if (!res.ok) return;
+        if (!res.ok) {
+          setSnapshot(null);
+          return;
+        }
         const data = await res.json();
 
         const temp = Number(data?.current?.temperature_2m);
         const weatherCode = Number(data?.current?.weather_code);
         const max = Number(data?.daily?.temperature_2m_max?.[0]);
         const min = Number(data?.daily?.temperature_2m_min?.[0]);
-        if ([temp, weatherCode, max, min].some((n) => Number.isNaN(n))) return;
+        if ([temp, weatherCode, max, min].some((n) => Number.isNaN(n))) {
+          setSnapshot(null);
+          return;
+        }
 
         setSnapshot({ temp, weatherCode, max, min });
       } catch {
         // Silent fallback to placeholder values when offline or blocked.
+        setSnapshot(null);
       }
     };
 

@@ -79,13 +79,10 @@ export const WIDGET_NAV: { id: WidgetNavId; label: string; hint: string; icon: L
 ];
 
 export const SETTINGS_NAV: { id: string; label: string; icon: LucideIcon }[] = [
-    { id: 'widgets', label: 'Widgets', icon: Grid2x2 },
     { id: 'background', label: 'Background', icon: Sparkles },
-    { id: 'salah', label: 'Salah', icon: Compass },
-    { id: 'clock', label: 'Clock', icon: Clock3 },
     { id: 'appearance', label: 'Appearance', icon: Palette },
+    { id: 'settings', label: 'Settings', icon: Settings2 },
     { id: 'about', label: 'About', icon: Info },
-    { id: 'tutorial', label: 'Tutorial', icon: GraduationCap },
     { id: 'feedback', label: 'Feedback', icon: MessageCircle },
 ];
 

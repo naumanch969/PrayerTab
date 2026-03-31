@@ -8,12 +8,20 @@ const NoteWidget: React.FC<WidgetComponentProps> = ({ isEditMode }) => {
   const [text, setText] = useState('Reflect before sleeping...');
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(NOTE_STORAGE_KEY);
-    if (saved) setText(saved);
+    try {
+      const saved = window.localStorage.getItem(NOTE_STORAGE_KEY);
+      if (saved) setText(saved);
+    } catch {
+      // Ignore storage failures in restricted browser contexts.
+    }
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(NOTE_STORAGE_KEY, text);
+    try {
+      window.localStorage.setItem(NOTE_STORAGE_KEY, text);
+    } catch {
+      // Ignore storage failures in restricted browser contexts.
+    }
   }, [text]);
 
   return (
