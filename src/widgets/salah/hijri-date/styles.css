@@ -1,0 +1,27 @@
+.sample-widget.sample-hijri-date {
+	border-radius: 18px;
+	padding: 12px;
+	background: linear-gradient(160deg, rgba(254, 251, 242, 0.97), rgba(245, 234, 206, 0.88));
+	border: 1px solid rgba(212, 168, 67, 0.24);
+	color: rgba(70, 49, 12, 0.95);
+	position: relative;
+	overflow: hidden;
+}
+
+.sample-hijri-date::after {
+	content: '';
+	position: absolute;
+	right: -34px;
+	top: -38px;
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(212, 168, 67, 0.28), rgba(212, 168, 67, 0));
+}
+
+.sample-hijri-date .sample-widget-label,
+.sample-hijri-date .sample-widget-sub,
+.sample-hijri-date .sample-widget-title { position: relative; z-index: 1; }
+.sample-hijri-date .sample-widget-label { color: rgba(128, 95, 32, 0.66); }
+.sample-hijri-date .sample-widget-title { font-size: clamp(20px, 3.2vw, 36px); line-height: 1.14; font-family: 'Cormorant Garamond', 'Georgia', serif; color: rgba(95, 66, 12, 0.97); }
+.sample-hijri-date .sample-widget-sub { color: rgba(120, 94, 49, 0.72); }

@@ -1,4 +1,5 @@
 import React from 'react';
+import './clock/styles.css';
 import { useClock } from '../../hooks/useClock';
 import type { WidgetComponentProps } from '../types';
 

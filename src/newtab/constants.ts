@@ -12,6 +12,13 @@ export interface WidgetSizeConstraint {
     minH: number;
     maxW: number;
     maxH: number;
+    minAspect?: number;
+    maxAspect?: number;
+}
+
+export interface WidgetDefaultSize {
+    w: number;
+    h: number;
 }
 
 export const BACKGROUNDS = [
@@ -31,20 +38,37 @@ export const MAX_WIDGET_W = 420;
 export const MAX_WIDGET_H = 260;
 
 export const WIDGET_SIZE_CONSTRAINTS: Record<WidgetId, WidgetSizeConstraint> = {
-    'prayer-times': { minW: 220, minH: 130, maxW: 470, maxH: 290 },
-    'next-prayer': { minW: 180, minH: 100, maxW: 360, maxH: 220 },
-    'hijri-date': { minW: 170, minH: 96, maxW: 320, maxH: 180 },
-    clock: { minW: 180, minH: 100, maxW: 360, maxH: 220 },
-    'daily-ayah': { minW: 240, minH: 130, maxW: 520, maxH: 320 },
-    'focus-task': { minW: 210, minH: 100, maxW: 460, maxH: 220 },
-    'dhikr-counter': { minW: 170, minH: 100, maxW: 300, maxH: 220 },
-    'prayer-streak': { minW: 190, minH: 110, maxW: 380, maxH: 240 },
-    'qibla-compass': { minW: 170, minH: 110, maxW: 300, maxH: 240 },
-    weather: { minW: 170, minH: 96, maxW: 320, maxH: 200 },
-    tasbeeh: { minW: 200, minH: 110, maxW: 360, maxH: 220 },
-    'ramadan-countdown': { minW: 190, minH: 100, maxW: 360, maxH: 220 },
-    bookmarks: { minW: 200, minH: 110, maxW: 420, maxH: 240 },
-    note: { minW: 220, minH: 120, maxW: 520, maxH: 320 },
+    'prayer-times': { minW: 336, minH: 264, maxW: 620, maxH: 460 },
+    'next-prayer': { minW: 288, minH: 192, maxW: 520, maxH: 360 },
+    'hijri-date': { minW: 252, minH: 168, maxW: 460, maxH: 300 },
+    clock: { minW: 264, minH: 180, maxW: 520, maxH: 340 },
+    'daily-ayah': { minW: 300, minH: 220, maxW: 4000, maxH: 4000, minAspect: 0.62, maxAspect: 1.6 },
+    'focus-task': { minW: 288, minH: 180, maxW: 560, maxH: 360 },
+    'dhikr-counter': { minW: 228, minH: 192, maxW: 380, maxH: 320 },
+    'prayer-streak': { minW: 288, minH: 192, maxW: 520, maxH: 360 },
+    'qibla-compass': { minW: 288, minH: 192, maxW: 520, maxH: 360 },
+    weather: { minW: 288, minH: 180, maxW: 520, maxH: 340 },
+    tasbeeh: { minW: 324, minH: 204, maxW: 580, maxH: 420 },
+    'ramadan-countdown': { minW: 324, minH: 192, maxW: 640, maxH: 420 },
+    bookmarks: { minW: 312, minH: 192, maxW: 620, maxH: 420 },
+    note: { minW: 312, minH: 216, maxW: 620, maxH: 460 },
+};
+
+export const WIDGET_DEFAULT_SIZES: Record<WidgetId, WidgetDefaultSize> = {
+    'prayer-times': { w: 372, h: 300 },
+    'next-prayer': { w: 336, h: 228 },
+    'hijri-date': { w: 288, h: 192 },
+    clock: { w: 324, h: 204 },
+    'daily-ayah': { w: 432, h: 552 },
+    'focus-task': { w: 360, h: 216 },
+    'dhikr-counter': { w: 252, h: 240 },
+    'prayer-streak': { w: 336, h: 228 },
+    'qibla-compass': { w: 336, h: 216 },
+    weather: { w: 324, h: 204 },
+    tasbeeh: { w: 384, h: 240 },
+    'ramadan-countdown': { w: 432, h: 240 },
+    bookmarks: { w: 384, h: 240 },
+    note: { w: 384, h: 264 },
 };
 
 export const WIDGET_NAV: { id: WidgetNavId; label: string; hint: string; icon: LucideIcon }[] = [

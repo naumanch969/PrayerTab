@@ -80,16 +80,41 @@ export function useWidgetInteraction(
                 }
 
                 const constraints = WIDGET_SIZE_CONSTRAINTS[interaction.widgetId];
-                const w = clamp(
+                const minW = constraints?.minW ?? MIN_WIDGET_W;
+                const maxW = constraints?.maxW ?? MAX_WIDGET_W;
+                const minH = constraints?.minH ?? MIN_WIDGET_H;
+                const maxH = constraints?.maxH ?? MAX_WIDGET_H;
+
+                let w = clamp(
                     snapToGrid(interaction.baseLayout.w + dx),
-                    constraints?.minW ?? MIN_WIDGET_W,
-                    constraints?.maxW ?? MAX_WIDGET_W,
+                    minW,
+                    maxW,
                 );
-                const h = clamp(
+                let h = clamp(
                     snapToGrid(interaction.baseLayout.h + dy),
-                    constraints?.minH ?? MIN_WIDGET_H,
-                    constraints?.maxH ?? MAX_WIDGET_H,
+                    minH,
+                    maxH,
                 );
+
+                const minAspect = constraints?.minAspect;
+                const maxAspect = constraints?.maxAspect;
+                if (minAspect || maxAspect) {
+                    const ratio = w / Math.max(h, 1);
+                    if (minAspect && ratio < minAspect) {
+                        w = clamp(snapToGrid(h * minAspect), minW, maxW);
+                    } else if (maxAspect && ratio > maxAspect) {
+                        h = clamp(snapToGrid(w / maxAspect), minH, maxH);
+                    }
+
+                    if (minAspect) {
+                        const minHeightForWidth = snapToGrid(w / minAspect);
+                        h = Math.min(h, clamp(minHeightForWidth, minH, maxH));
+                    }
+                    if (maxAspect) {
+                        const minWidthForHeight = snapToGrid(h * maxAspect);
+                        w = Math.min(w, clamp(minWidthForHeight, minW, maxW));
+                    }
+                }
 
                 return { ...prev, [interaction.widgetId]: { ...current, w, h } };
             });

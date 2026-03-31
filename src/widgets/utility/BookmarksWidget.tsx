@@ -1,4 +1,5 @@
 import React from 'react';
+import './bookmarks/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const links = [

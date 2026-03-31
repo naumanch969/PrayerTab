@@ -1,4 +1,5 @@
 import React from 'react';
+import './tasbeeh/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const phrases = ['Subhanallah', 'Alhamdulillah', 'Allahu Akbar'] as const;

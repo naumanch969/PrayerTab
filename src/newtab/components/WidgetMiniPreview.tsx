@@ -40,7 +40,10 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'daily-ayah':
             return (
                 <div className="widget-mini widget-mini-quote">
-                    <Quote size={14} strokeWidth={2} />
+                    <div className="widget-mini-ayah-head">
+                        <Quote size={14} strokeWidth={2} />
+                        <span className="widget-mini-ayah-word">Ayah</span>
+                    </div>
                     <div className="widget-mini-quote-lines"><span /><span /><span /></div>
                 </div>
             );

@@ -1,4 +1,5 @@
 import React from 'react';
+import './prayer-streak/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const PRAYERS: Array<{ key: keyof Omit<NonNullable<WidgetComponentProps['runtime']['todayLog']>, 'date'>; label: string }> = [

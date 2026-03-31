@@ -1,4 +1,5 @@
 import React from 'react';
+import './qibla-compass/styles.css';
 import { calculateQibla } from '../../lib/qibla';
 import type { WidgetComponentProps } from '../types';
 

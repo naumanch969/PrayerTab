@@ -1,4 +1,5 @@
 import React from 'react';
+import './dhikr-counter/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const formatDhikrLabel = (value: string) => (value === 'AllahuAkbar' ? 'Allahu Akbar' : value);

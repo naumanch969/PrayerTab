@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import './weather/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 interface WeatherSnapshot {

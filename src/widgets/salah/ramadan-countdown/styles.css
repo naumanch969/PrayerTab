@@ -1,0 +1,29 @@
+.sample-widget.sample-ramadan {
+	border-radius: 22px;
+	padding: 14px;
+	background:
+		linear-gradient(145deg, rgba(7, 35, 26, 0.9), rgba(7, 29, 24, 0.93)),
+		radial-gradient(circle at 80% 18%, rgba(212, 168, 67, 0.2), rgba(212, 168, 67, 0));
+	border: 1px solid rgba(212, 168, 67, 0.3);
+	color: rgba(232, 244, 228, 0.96);
+	position: relative;
+	overflow: hidden;
+}
+
+.sample-ramadan::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(120deg, rgba(212, 168, 67, 0.12), rgba(212, 168, 67, 0) 45%);
+	pointer-events: none;
+}
+
+.sample-ramadan .sample-widget-label,
+.sample-ramadan .sample-widget-title,
+.sample-ramadan .sample-widget-sub,
+.sample-ramadan .sample-dot-progress { position: relative; z-index: 1; }
+.sample-ramadan .sample-widget-label { color: rgba(193, 219, 182, 0.78); }
+.sample-ramadan .sample-widget-title { color: rgba(248, 252, 242, 0.98); font-size: clamp(22px, 3.3vw, 40px); }
+.sample-ramadan .sample-widget-sub { color: rgba(198, 218, 188, 0.74); }
+.sample-ramadan .sample-dot-progress span { background: rgba(222, 247, 216, 0.2); }
+.sample-ramadan .sample-dot-progress span.on { background: rgba(212, 168, 67, 0.95); }

@@ -1,0 +1,14 @@
+.sample-widget.sample-tasbeeh {
+	border-radius: 16px;
+	padding: 11px;
+	background: linear-gradient(164deg, rgba(35, 28, 18, 0.9), rgba(20, 17, 11, 0.86));
+	border: 1px solid rgba(212, 168, 67, 0.24);
+	color: rgba(237, 225, 196, 0.95);
+	gap: 8px;
+}
+
+.sample-tasbeeh .sample-widget-label { color: rgba(212, 183, 120, 0.72); }
+.sample-tasbeeh .sample-tasbeeh-row > span:nth-child(1) { color: rgba(237, 224, 190, 0.9); }
+.sample-tasbeeh .sample-tasbeeh-row > span:nth-child(2) { color: rgba(255, 238, 191, 0.98); font-weight: 600; }
+.sample-tasbeeh .sample-progress-bar { background: rgba(212, 168, 67, 0.16); }
+.sample-tasbeeh .sample-progress-bar span { background: linear-gradient(90deg, rgba(212, 168, 67, 0.4), rgba(212, 168, 67, 0.98)); }

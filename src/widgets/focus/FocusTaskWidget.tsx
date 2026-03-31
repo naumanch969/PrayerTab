@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './focus-task/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const FocusTaskWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime }) => {

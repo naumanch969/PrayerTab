@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './note/styles.css';
 import type { WidgetComponentProps } from '../types';
 
 const NOTE_STORAGE_KEY = 'prayertab-widget-note';

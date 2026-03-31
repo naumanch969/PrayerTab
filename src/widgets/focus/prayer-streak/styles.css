@@ -1,0 +1,14 @@
+.sample-widget.sample-streak {
+	border-radius: 16px;
+	padding: 11px;
+	background: linear-gradient(160deg, rgba(246, 237, 215, 0.95), rgba(241, 229, 197, 0.9));
+	border: 1px solid rgba(212, 168, 67, 0.26);
+	color: rgba(79, 56, 15, 0.94);
+}
+
+.sample-streak .sample-widget-label { color: rgba(123, 91, 30, 0.66); }
+.sample-streak .sample-streak-head { display: flex; align-items: baseline; gap: 8px; }
+.sample-streak .sample-streak-value { font-size: clamp(30px, 4.1vw, 48px); font-weight: 700; color: rgba(104, 72, 11, 0.98); line-height: 1; }
+.sample-streak .sample-widget-sub { color: rgba(117, 88, 38, 0.72); }
+.sample-streak .sample-streak-days span { border: 1px solid rgba(212, 168, 67, 0.22); background: rgba(255, 249, 234, 0.66); }
+.sample-streak .sample-streak-days span.on { background: rgba(212, 168, 67, 0.2); border-color: rgba(212, 168, 67, 0.56); }

@@ -1,4 +1,5 @@
 import React from 'react';
+import './ramadan-countdown/styles.css';
 import { toHijri } from '../../lib/hijri';
 import type { WidgetComponentProps } from '../types';
 

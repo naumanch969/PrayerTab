@@ -1,0 +1,15 @@
+.sample-widget.sample-weather {
+	border-radius: 18px;
+	padding: 12px;
+	background:
+		linear-gradient(160deg, rgba(32, 25, 14, 0.9), rgba(17, 15, 10, 0.92)),
+		radial-gradient(circle at 80% 12%, rgba(212, 168, 67, 0.2), rgba(212, 168, 67, 0));
+	border: 1px solid rgba(212, 168, 67, 0.24);
+	color: rgba(249, 236, 205, 0.95);
+}
+
+.sample-weather .sample-widget-label { color: rgba(214, 183, 117, 0.68); }
+.sample-weather .sample-weather-row { align-items: flex-end; }
+.sample-weather .sample-weather-big { font-size: clamp(34px, 5vw, 58px); line-height: 0.95; color: rgba(255, 242, 212, 0.98); }
+.sample-weather .sample-weather-metrics span:first-child { color: rgba(236, 222, 190, 0.88); }
+.sample-weather .sample-weather-metrics span:last-child { color: rgba(209, 184, 123, 0.68); }

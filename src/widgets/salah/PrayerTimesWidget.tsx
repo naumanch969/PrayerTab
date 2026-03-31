@@ -1,4 +1,5 @@
 import React from 'react';
+import './prayer-times/styles.css';
 import { usePrayerTimes } from '../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 

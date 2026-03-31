@@ -7,7 +7,7 @@ import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout } from '..
 import type { WidgetRuntimeData } from '../widgets/types';
 
 import { NAV_WIDGETS } from './constants';
-import { defaultLayoutForIndex, getDailyBackground } from './utils';
+import { defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
 import type { WidgetNavId } from './types';
 
 import { useWidgetInteraction } from './hooks/useWidgetInteraction';
@@ -109,7 +109,8 @@ const NewTab: React.FC = () => {
     };
 
     const getWidgetLayoutFor = (widgetId: WidgetId, index: number): WidgetLayout => {
-        return layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index);
+        const raw = layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index, widgetId);
+        return normalizeLayout(widgetId, raw);
     };
 
     const addWidget = (widgetId: WidgetId) => {
@@ -118,7 +119,7 @@ const NewTab: React.FC = () => {
         const nextEnabledWidgets = [...addedWidgets, widgetId];
         const nextLayouts = { ...layoutDraft };
         if (!nextLayouts[widgetId]) {
-            nextLayouts[widgetId] = defaultLayoutForIndex(nextEnabledWidgets.length - 1);
+            nextLayouts[widgetId] = defaultLayoutForIndex(nextEnabledWidgets.length - 1, widgetId);
         }
 
         setLayoutDraft(nextLayouts);
