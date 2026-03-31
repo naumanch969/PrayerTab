@@ -4,6 +4,7 @@ import { useStorage } from '../hooks/useStorage';
 import Onboarding from '../components/Onboarding';
 import SettingsPanel from '../components/SettingsPanel';
 import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout } from '../types';
+import type { WidgetRuntimeData } from '../widgets/types';
 
 import { NAV_WIDGETS } from './constants';
 import { defaultLayoutForIndex, getDailyBackground } from './utils';
@@ -97,6 +98,15 @@ const NewTab: React.FC = () => {
     const { settings } = storage;
     const addedWidgets = settings.enabledWidgets ?? [];
     const activeWidgets = activeNav ? NAV_WIDGETS[activeNav] : [];
+    const widgetRuntime: WidgetRuntimeData = {
+        todayLog: storage.todayLog,
+        streak: storage.streak,
+        dhikr: storage.dhikr,
+        intention: storage.intention,
+        togglePrayer: storage.togglePrayer,
+        tapDhikr: storage.tapDhikr,
+        setIntention: storage.setIntention,
+    };
 
     const getWidgetLayoutFor = (widgetId: WidgetId, index: number): WidgetLayout => {
         return layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index);
@@ -182,6 +192,7 @@ const NewTab: React.FC = () => {
                         onToggleSettings={(id) => setActiveWidgetSettingsId((curr) => (curr === id ? null : id))}
                         onSetDisplayMode={setWidgetDisplayMode}
                         settings={settings}
+                        runtime={widgetRuntime}
                     />
                 ))}
             </div>

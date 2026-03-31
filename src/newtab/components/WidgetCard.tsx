@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings2, Trash2 } from 'lucide-react';
 import type { UserSettings, WidgetId, WidgetLayout, WidgetDisplayMode } from '../../types';
+import type { WidgetRuntimeData } from '../../widgets/types';
 import { getSizeTier } from '../utils';
 import { WIDGET_LOOKUP } from '../constants';
 import { WidgetRenderer } from '../../widgets/WidgetRenderer';
@@ -17,10 +18,11 @@ interface WidgetCardProps {
     onToggleSettings: (widgetId: WidgetId) => void;
     onSetDisplayMode: (widgetId: WidgetId, mode: WidgetDisplayMode) => void;
     settings: UserSettings;
+    runtime: WidgetRuntimeData;
     index: number;
 }
 
-export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, settings, index }) => {
+export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, settings, runtime, index }) => {
     const widget = WIDGET_LOOKUP[widgetId];
     if (!widget) return null; // Safe guard against corrupt memory or unknown widgets
 
@@ -32,12 +34,12 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
             style={{ left: layout.x, top: layout.y, width: layout.w, height: layout.h }}
             onPointerDown={(event) => onDragStart(widgetId, index, event)}
         >
-            <div className="canvas-widget-title">{widget.name}</div>
             <WidgetRenderer
                 widgetId={widgetId}
                 sizeTier={sizeTier}
                 isEditMode={isEditMode}
                 settings={settings}
+                runtime={runtime}
             />
 
             {isEditMode && (

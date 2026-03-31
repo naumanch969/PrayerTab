@@ -8,13 +8,15 @@ const DailyAyahWidget: React.FC<WidgetComponentProps> = ({ sizeTier }) => {
   const ayah = getDailyAyah(h.day);
 
   if (sizeTier === 'small') {
-    return <div className="widget-body-empty">{ayah.surah}</div>;
+    return <div className="sample-widget sample-ayah"><div className="sample-widget-label">Daily Ayah</div><div className="sample-widget-sub">{ayah.surah} {ayah.ayahNumber}</div></div>;
   }
 
   return (
-    <div className="widget-body-ayah">
-      <div className="widget-body-ayah-text">{ayah.arabic}</div>
-      <div className="widget-body-submetric">{ayah.surah} {ayah.ayahNumber}</div>
+    <div className="sample-widget sample-ayah">
+      <div className="sample-widget-label">Daily Ayah</div>
+      <div className="sample-ayah-arabic">{ayah.arabic}</div>
+      {sizeTier === 'large' && <div className="sample-ayah-translation">{ayah.translation}</div>}
+      <div className="sample-widget-sub">{ayah.surah} · {ayah.ayahNumber}</div>
     </div>
   );
 };

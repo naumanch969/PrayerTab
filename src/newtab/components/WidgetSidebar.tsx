@@ -29,9 +29,9 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                 <motion.aside
                     className={`widget-sidebar-left open ${isCollapsed ? 'collapsed' : ''}`}
                     initial={{ opacity: 0, x: -24 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    animate={{ opacity: 1, x: 0, width: isCollapsed ? 78 : 286 }}
                     exit={{ opacity: 0, x: -24 }}
-                    transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ type: 'spring', stiffness: 240, damping: 30, mass: 0.8 }}
                 >
                     <div
                         className="widget-sidebar-left-inner"
@@ -110,7 +110,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                             initial={{ opacity: 0, x: -18, scale: 0.98 }}
                             animate={{ opacity: 1, x: 0, scale: 1 }}
                             exit={{ opacity: 0, x: -18, scale: 0.98 }}
-                            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ type: 'spring', stiffness: 290, damping: 30, mass: 0.65 }}
                             onPointerLeave={onClearActiveNav}
                         >
                             <div className="widget-options-head">
