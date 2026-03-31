@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { UserSettings, CalculationMethod } from '../types';
 import { BACKGROUNDS } from '../newtab/constants';
-import { RefreshCcw, Image as ImageIcon, Film, Link as LinkIcon, Search, Upload, Palette, Heart, X, ChevronDown } from 'lucide-react';
+import { RefreshCcw, Image as ImageIcon, Film, Link as LinkIcon, Search, Upload, Palette, Heart, X, ChevronDown, MessageCircle } from 'lucide-react';
 
 interface SettingsPanelProps {
   activeTab: string;
@@ -249,62 +249,114 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
     );
   };
 
-  const title = tab === 'appearance' ? 'Appearance' : tab === 'about' ? 'About' : tab === 'feedback' ? 'Feedback' : 'Settings';
+  const title = tab === 'appearance' ? 'Appearance' : tab === 'about' ? 'About' : tab === 'feedback' ? 'Feedback' : 'General Settings';
 
   return (
-    <div className="settings-card shadow-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="settings-card modal-large" onClick={(e) => e.stopPropagation()}>
       <div className="settings-header">
         <span className="settings-title">{title}</span>
         <button className="settings-close" onClick={onClose}><X size={20} /></button>
       </div>
 
-      <div className="settings-body">
+      <div className="settings-body-large">
         {tab === 'appearance' && (
-          <div className="settings-placeholder">Appearance settings coming soon. Customize colors, fonts, and dark mode preferences.</div>
+          <div className="settings-grid">
+            <div className="settings-section">
+              <label className="settings-label">Typography</label>
+              <div className="settings-method-grid">
+                <button className="settings-method-btn active">Inter (Default)</button>
+                <button className="settings-method-btn">Fraunces (Serif)</button>
+                <button className="settings-method-btn">System UI</button>
+              </div>
+            </div>
+            
+            <div className="settings-section">
+              <label className="settings-label">Theme Mode</label>
+              <div className="settings-method-grid">
+                <button className="settings-method-btn active">Dark (Glassmorphism)</button>
+                <button className="settings-method-btn" disabled>Light (Coming Soon)</button>
+              </div>
+            </div>
+            
+            <div className="settings-section">
+              <label className="settings-label">Widget Opacity</label>
+              <input type="range" min="0" max="100" defaultValue="40" className="settings-slider" />
+              <div className="settings-slider-labels">
+                <span>Transparent</span>
+                <span>Opaque</span>
+              </div>
+            </div>
+          </div>
         )}
 
         {tab === 'settings' && (
-          <>
-            <label className="settings-label">Your name</label>
-            <input
-              className="settings-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-            />
-
-            <label className="settings-label">Calculation method</label>
-            <div className="settings-method-grid">
-              {METHODS.map((m) => (
-                <button
-                  key={m.value}
-                  className={`settings-method-btn ${method === m.value ? 'active' : ''}`}
-                  onClick={() => setMethod(m.value)}
-                >
-                  {m.label}
-                </button>
-              ))}
+          <div className="settings-grid">
+            <div className="settings-section">
+              <label className="settings-label">Personalization</label>
+              <input
+                className="settings-input"
+                style={{ paddingLeft: '16px' }}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="How should we address you?"
+              />
+            </div>
+            
+            <div className="settings-section">
+              <label className="settings-label">Prayer Calculation Method</label>
+              <div className="settings-method-grid">
+                {METHODS.map((m) => (
+                  <button
+                    key={m.value}
+                    className={`settings-method-btn ${method === m.value ? 'active' : ''}`}
+                    onClick={() => setMethod(m.value)}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <label className="settings-label">Location</label>
-            <button className="settings-relocate-btn" onClick={relocate} disabled={relocating}>
-              {relocating ? 'Detecting…' : '📍 Update My Location'}
-            </button>
-          </>
+            <div className="settings-section">
+              <label className="settings-label">Location Data</label>
+              <div className="settings-location-box">
+                <span className="location-hint">Accurate coordinates are required for precise prayer times calculation.</span>
+                <button className="settings-relocate-btn" onClick={relocate} disabled={relocating}>
+                  {relocating ? 'Detecting Coordinates…' : '📍 Auto-Detect My Location'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {tab === 'about' && (
-          <div className="settings-about">
-            <p><strong>5PrayerTab</strong> is a serene dashboard designed to help you focus on your prayers, intentions, and daily reflections.</p>
-            <p>Build 1.0.0</p>
+          <div className="settings-about-wrapper">
+             <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
+             <h2 className="about-heading">5PrayerTab</h2>
+             <p className="about-version">Version 1.0.0</p>
+             <p className="about-desc">A serene, focus-driven dashboard designed to keep your intentions, prayers, and daily reflections perfectly aligned throughout the day.</p>
+             <div className="about-links">
+               <a href="#" className="about-link">Privacy Policy</a>
+               <span className="dot-sep">•</span>
+               <a href="#" className="about-link">Terms of Service</a>
+               <span className="dot-sep">•</span>
+               <a href="https://github.com/your-repo/5PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
+             </div>
           </div>
         )}
 
         {tab === 'feedback' && (
-          <div className="settings-feedback">
-            <p>We'd love to hear your thoughts! Help us improve the extension.</p>
-            <button className="settings-action-btn full-width" onClick={() => window.open('mailto:support@example.com')}>
-              Send Feedback
+          <div className="settings-feedback-wrapper">
+            <MessageCircle className="feedback-icon" size={48} />
+            <h2 className="feedback-heading">We value your input</h2>
+            <p className="feedback-desc">Notice a bug? Have an idea for a new widget? We'd love to hear your thoughts to help us improve 5PrayerTab.</p>
+            <textarea 
+               className="settings-textarea" 
+               placeholder="Describe your suggestion or issue here..."
+               rows={6}
+            />
+            <button className="settings-action-btn primary full-width" onClick={() => window.open('mailto:support@example.com?subject=5PrayerTab Feedback')}>
+              Send via Email
             </button>
           </div>
         )}

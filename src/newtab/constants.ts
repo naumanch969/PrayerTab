@@ -27,6 +27,18 @@ export const BACKGROUNDS = [
     'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=1920&q=80',
     'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=1920&q=80',
     'https://images.unsplash.com/photo-1559329373-916f3239e5c8?w=1920&q=80',
+    'https://images.unsplash.com/photo-1582046297314-c102bd5064e1?w=1920&q=80',
+    'https://images.unsplash.com/photo-1551041777-ed277b8dd348?w=1920&q=80',
+    'https://images.unsplash.com/photo-1623824361541-1f9e29a99da9?w=1920&q=80',
+    'https://images.unsplash.com/photo-1588667822501-c918a93e3518?w=1920&q=80',
+    'https://images.unsplash.com/photo-1565551368153-65239e144fe9?w=1920&q=80',
+    'https://images.unsplash.com/photo-1580467104330-80410ff11df6?w=1920&q=80',
+    'https://images.unsplash.com/photo-1626284666579-22a4505f0393?w=1920&q=80',
+    'https://images.unsplash.com/photo-1582216839352-8706316715f3?w=1920&q=80',
+    'https://images.unsplash.com/photo-1624869503463-5490bc8cb4ae?w=1920&q=80',
+    'https://images.unsplash.com/photo-1605658661642-1e9bf4c01a5d?w=1920&q=80',
+    'https://images.unsplash.com/photo-1598887142487-3c854d51d4c8?w=1920&q=80',
+    'https://images.unsplash.com/photo-1519754876612-409fcb4a8ce8?w=1920&q=80'
 ];
 
 export const GRID_SIZE = 12;

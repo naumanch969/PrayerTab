@@ -49,6 +49,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                     animate={{ opacity: 1, x: 0, width: isCollapsed ? 78 : 286 }}
                     exit={{ opacity: 0, x: -24 }}
                     transition={{ type: 'spring', stiffness: 240, damping: 30, mass: 0.8 }}
+                    onMouseLeave={onClearActiveNav}
                 >
                     <div
                         className="widget-sidebar-left-inner"
@@ -69,7 +70,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                             {isCollapsed ? <PanelLeftOpen size={14} strokeWidth={2.2} /> : <PanelLeftClose size={14} strokeWidth={2.2} />}
                         </button>
 
-                        <header className="widget-sidebar-head">
+                        <header className="widget-sidebar-head" onMouseEnter={onClearActiveNav}>
                             <div className="widget-sidebar-kicker">Widget Studio</div>
                             <h2 className="widget-sidebar-title">Build your canvas</h2>
                             <p className="widget-sidebar-subtitle">Add, arrange, and resize widgets to match your flow.</p>
@@ -97,7 +98,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                             </div>
                         </div>
 
-                        <div className="widget-section widget-section-settings">
+                        <div className="widget-section widget-section-settings" onMouseEnter={onClearActiveNav}>
                             <div className="widget-section-title">Settings</div>
                             <div className="widget-nav-list">
                                 {SETTINGS_NAV.map((nav) => (
@@ -115,7 +116,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                             </div>
                         </div>
 
-                        <div className="widget-edit-state">
+                        <div className="widget-edit-state" onMouseEnter={onClearActiveNav}>
                             {isEditMode ? 'Edit mode active while sidebar is open' : 'Open sidebar to edit layout'}
                         </div>
                     </div>
@@ -128,7 +129,6 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                             animate={{ opacity: 1, x: 0, scale: 1 }}
                             exit={{ opacity: 0, x: -18, scale: 0.98 }}
                             transition={{ type: 'spring', stiffness: 290, damping: 30, mass: 0.65 }}
-                            onPointerLeave={onClearActiveNav}
                         >
                             <div className="widget-options-head">
                                 <div className="widget-options-kicker">{activeNav.toUpperCase()}</div>
