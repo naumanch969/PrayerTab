@@ -1,30 +1,32 @@
-# Privacy Policy for Tab Saver
+# Privacy Policy for 5PrayerTab
 
-**Last Updated: March 27, 2026**
+**Last Updated: April 1, 2026**
 
-Tab Saver ("the Extension") is committed to protecting your privacy. This Privacy Policy explains how we handle your data.
+5PrayerTab is committed to protecting user privacy. This policy explains what data is stored locally and when external requests are made.
 
-## 1. Single Purpose
-The Extension is a professional browser workspace manager designed to help users capture, organize, and restore browser sessions.
+## 1. Purpose
+5PrayerTab is a spiritual productivity new-tab extension that helps users track prayer-related information and daily reflection widgets.
 
-## 2. Data Collection and Usage
-Tab Saver values your privacy above all else. **We do not collect, sell, or transmit your personal data to any external servers.**
+## 2. Data Storage
+- User settings, widget layouts, prayer logs, dhikr state, and intention text are stored locally in browser storage.
+- Some widget-local values may be stored in localStorage for fast restoration.
+- Data is not sold or used for advertising.
 
-*   **Web History (Tabs & URLs)**: To function, the Extension captures the URLs and titles of your currently open tabs. This data is used solely to create session snapshots ("Vaults") so you can restore them later.
-*   **Local Storage**: All captured data is stored strictly on your local device using the `chrome.storage` API. We do not have access to your saved sessions.
-*   **Offloading**: No data is ever shared with third parties, used for advertising, or tracked for analytics.
+## 3. External Requests
+The extension may call third-party endpoints to provide optional functionality:
+- Geocoding for manual city lookup
+- Background image URLs
+- Weather data lookup by user location
 
-## 3. Permissions Justifications
-*   **tabs**: Used to read URLs and titles of open tabs for session saving and to restore them upon request.
-*   **storage**: Used to persist your saved vaults on your local machine.
-*   **windows**: Used to create new browser windows when restoring a saved session.
-*   **alarms**: Used to trigger periodic automatic snapshots to prevent data loss.
+These requests are used only to render requested features in the user interface.
 
-## 4. No Remote Code
-The Extension does not use any remote code, tracking pixels, or external scripts. All logic is contained within the local extension package.
+## 4. Permissions
+- `storage`: persist settings and widget state locally.
+- `geolocation`: determine user coordinates for prayer times and weather.
+- `alarms`: reserved for periodic extension tasks.
 
-## 5. Third-Party Access
-Your data is never sold or transferred to third parties. It is used exclusively to fulfill the Extension's primary purpose.
+## 5. No Remote Code Execution
+The extension does not execute remote scripts as application logic.
 
-## 6. Contact
-For any questions regarding this privacy policy, please open an issue on the official GitHub repository.
+## 6. User Control
+Users can change or remove local app data by clearing extension storage through browser settings.

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { Share2, Link2, Plus } from 'lucide-react';
+import { Check, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { useStorage } from '../hooks/useStorage';
 import Onboarding from '../components/Onboarding';
 import SettingsPanel from '../components/SettingsPanel';
@@ -7,7 +7,7 @@ import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout } from '..
 import type { WidgetRuntimeData } from '../widgets/types';
 
 import { NAV_WIDGETS } from './constants';
-import { defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
+import { clampLayoutToViewport, defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
 import type { WidgetNavId } from './types';
 
 import { useWidgetInteraction } from './hooks/useWidgetInteraction';
@@ -20,9 +20,13 @@ const NewTab: React.FC = () => {
     const [showCustomizePrompt, setShowCustomizePrompt] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+    const [isEditMode, setIsEditMode] = useState(false);
     const [activeNav, setActiveNav] = useState<WidgetNavId | null>('salah');
     const [activeNavTop, setActiveNavTop] = useState(0);
     const [activeWidgetSettingsId, setActiveWidgetSettingsId] = useState<WidgetId | null>(null);
+    const [undoStack, setUndoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
+    const [redoStack, setRedoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
+    const [editSessionSnapshot, setEditSessionSnapshot] = useState<Partial<Record<WidgetId, WidgetLayout>> | null>(null);
 
     const promptSeenPersisted = useRef(false);
     const settingsRef = useRef<UserSettings | null>(null);
@@ -63,7 +67,7 @@ const NewTab: React.FC = () => {
     };
 
     const { layoutDraft, setLayoutDraft, startInteraction } = useWidgetInteraction(
-        sidebarOpen,
+        isEditMode,
         storage.settings?.widgetLayouts ?? {},
         (layouts) => {
             if (settingsRef.current) {
@@ -75,6 +79,159 @@ const NewTab: React.FC = () => {
         }
     );
 
+    const cloneLayouts = (layouts: Partial<Record<WidgetId, WidgetLayout>>) => {
+        const cloned: Partial<Record<WidgetId, WidgetLayout>> = {};
+        Object.entries(layouts).forEach(([widgetId, layout]) => {
+            if (!layout) return;
+            cloned[widgetId as WidgetId] = { ...layout };
+        });
+        return cloned;
+    };
+
+    const pushUndoSnapshot = () => {
+        if (!isEditMode) return;
+        setUndoStack((prev) => [...prev, cloneLayouts(layoutDraft)]);
+        setRedoStack([]);
+    };
+
+    const enterEditMode = () => {
+        if (!settings) return;
+        setEditSessionSnapshot(cloneLayouts(layoutDraft));
+        setUndoStack([]);
+        setRedoStack([]);
+        setIsEditMode(true);
+        setSidebarOpen(true);
+    };
+
+    const exitEditMode = () => {
+        setIsEditMode(false);
+        setActiveWidgetSettingsId(null);
+    };
+
+    const undoEdit = () => {
+        if (!isEditMode) return;
+        setUndoStack((prev) => {
+            const last = prev[prev.length - 1];
+            if (!last) return prev;
+
+            setRedoStack((redoPrev) => [...redoPrev, cloneLayouts(layoutDraftRef.current)]);
+            setLayoutDraft(last);
+            persistSettings({ widgetLayouts: last as Record<WidgetId, WidgetLayout> });
+            return prev.slice(0, -1);
+        });
+    };
+
+    const redoEdit = () => {
+        if (!isEditMode) return;
+        setRedoStack((prev) => {
+            const last = prev[prev.length - 1];
+            if (!last) return prev;
+
+            setUndoStack((undoPrev) => [...undoPrev, cloneLayouts(layoutDraftRef.current)]);
+            setLayoutDraft(last);
+            persistSettings({ widgetLayouts: last as Record<WidgetId, WidgetLayout> });
+            return prev.slice(0, -1);
+        });
+    };
+
+    const cancelEdit = () => {
+        if (!isEditMode || !editSessionSnapshot) {
+            exitEditMode();
+            return;
+        }
+
+        setLayoutDraft(editSessionSnapshot);
+        persistSettings({ widgetLayouts: editSessionSnapshot as Record<WidgetId, WidgetLayout> });
+        setUndoStack([]);
+        setRedoStack([]);
+        setEditSessionSnapshot(null);
+        exitEditMode();
+    };
+
+    const doneEdit = () => {
+        setUndoStack([]);
+        setRedoStack([]);
+        setEditSessionSnapshot(null);
+        exitEditMode();
+    };
+
+    const recoverLayoutToViewport = () => {
+        const nextLayouts: Partial<Record<WidgetId, WidgetLayout>> = {};
+
+        addedWidgets.forEach((widgetId, index) => {
+            const source = layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index, widgetId);
+            const normalized = normalizeLayout(widgetId, source);
+            nextLayouts[widgetId] = clampLayoutToViewport(normalized);
+        });
+
+        if (isEditMode) {
+            pushUndoSnapshot();
+        }
+        setLayoutDraft(nextLayouts);
+        persistSettings({ widgetLayouts: nextLayouts as Record<WidgetId, WidgetLayout> });
+    };
+
+    useEffect(() => {
+        if (!isEditMode) return;
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEdit();
+                return;
+            }
+
+            const isUndo = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z';
+            if (isUndo) {
+                event.preventDefault();
+                if (event.shiftKey) {
+                    redoEdit();
+                } else {
+                    undoEdit();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [isEditMode, undoStack, redoStack, layoutDraft, editSessionSnapshot]);
+
+    const layoutDraftRef = useRef(layoutDraft);
+
+    useEffect(() => {
+        layoutDraftRef.current = layoutDraft;
+    }, [layoutDraft]);
+
+    useEffect(() => {
+        const onResize = () => {
+            if (!settingsRef.current) return;
+
+            const currentLayouts = layoutDraftRef.current;
+            const nextLayouts: Partial<Record<WidgetId, WidgetLayout>> = {};
+            let changed = false;
+
+            const activeWidgetIds = settingsRef.current.enabledWidgets ?? [];
+            activeWidgetIds.forEach((widgetId, index) => {
+                const source = currentLayouts[widgetId] ?? settingsRef.current?.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index, widgetId);
+                const normalized = normalizeLayout(widgetId, source);
+                const clamped = clampLayoutToViewport(normalized);
+                nextLayouts[widgetId] = clamped;
+
+                if (!source || source.x !== clamped.x || source.y !== clamped.y || source.w !== clamped.w || source.h !== clamped.h) {
+                    changed = true;
+                }
+            });
+
+            if (!changed) return;
+
+            setLayoutDraft(nextLayouts);
+            persistSettings({ widgetLayouts: nextLayouts as Record<WidgetId, WidgetLayout> });
+        };
+
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, []);
+
     const markCustomizePromptSeen = () => {
         setShowCustomizePrompt(false);
         if (!storage.settings || storage.settings.hasSeenCustomizePrompt) return;
@@ -85,11 +242,18 @@ const NewTab: React.FC = () => {
     };
 
     const openCustomizeFromPrompt = () => {
-        setSidebarOpen(true);
+        enterEditMode();
         markCustomizePromptSeen();
     };
 
-    const isEditMode = sidebarOpen;
+    const toggleWidgetStudio = () => {
+        if (sidebarOpen) {
+            setSidebarOpen(false);
+            return;
+        }
+
+        enterEditMode();
+    };
 
     if (storage.loading) return null;
     if (!storage.settings?.onboardingComplete) {
@@ -111,11 +275,15 @@ const NewTab: React.FC = () => {
 
     const getWidgetLayoutFor = (widgetId: WidgetId, index: number): WidgetLayout => {
         const raw = layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index, widgetId);
-        return normalizeLayout(widgetId, raw);
+        return clampLayoutToViewport(normalizeLayout(widgetId, raw));
     };
 
     const addWidget = (widgetId: WidgetId) => {
         if (addedWidgets.includes(widgetId)) return;
+
+        if (isEditMode) {
+            pushUndoSnapshot();
+        }
 
         const nextEnabledWidgets = [...addedWidgets, widgetId];
         const nextLayouts = { ...layoutDraft };
@@ -131,6 +299,10 @@ const NewTab: React.FC = () => {
     };
 
     const removeWidget = (widgetId: WidgetId) => {
+        if (isEditMode) {
+            pushUndoSnapshot();
+        }
+
         const nextEnabledWidgets = addedWidgets.filter((id) => id !== widgetId);
         const nextLayouts = { ...layoutDraft };
         const nextPreferences = { ...settings.widgetPreferences };
@@ -204,13 +376,45 @@ const NewTab: React.FC = () => {
                     className="widget-plus-btn"
                     aria-label="Open widget sidebar"
                     title="Widgets"
-                    onClick={() => setSidebarOpen((current) => !current)}
+                    onClick={toggleWidgetStudio}
                 >
                     <Plus size={18} strokeWidth={2.3} />
                 </button>
-                <button className="widget-mini-btn" aria-label="Share"><Share2 size={13} strokeWidth={2} /></button>
-                <button className="widget-mini-btn" aria-label="Link"><Link2 size={13} strokeWidth={2} /></button>
+                {!isEditMode && (
+                    <button
+                        className="widget-mini-btn"
+                        aria-label="Enter edit mode"
+                        title="Edit layout"
+                        onClick={enterEditMode}
+                    >
+                        Edit
+                    </button>
+                )}
             </div>
+
+            {isEditMode && (
+                <div className="nt-edit-toolbar" role="toolbar" aria-label="Edit mode tools">
+                    <button className="nt-edit-tool" onClick={undoEdit} disabled={undoStack.length === 0} title="Undo (Ctrl/Cmd+Z)">
+                        <RotateCcw size={14} strokeWidth={2.2} />
+                        Undo
+                    </button>
+                    <button className="nt-edit-tool" onClick={redoEdit} disabled={redoStack.length === 0} title="Redo (Shift+Ctrl/Cmd+Z)">
+                        <RotateCw size={14} strokeWidth={2.2} />
+                        Redo
+                    </button>
+                    <button className="nt-edit-tool" onClick={recoverLayoutToViewport} title="Recover widgets to viewport">
+                        Recover
+                    </button>
+                    <button className="nt-edit-tool danger" onClick={cancelEdit} title="Cancel changes (Esc)">
+                        <X size={14} strokeWidth={2.2} />
+                        Cancel
+                    </button>
+                    <button className="nt-edit-tool primary" onClick={doneEdit} title="Done editing">
+                        <Check size={14} strokeWidth={2.2} />
+                        Done
+                    </button>
+                </div>
+            )}
 
             <WidgetSidebar
                 isOpen={sidebarOpen}
@@ -229,6 +433,13 @@ const NewTab: React.FC = () => {
                     setActiveNavTop(top);
                 }}
                 onClearActiveNav={() => setActiveNav(null)}
+                onToggleEditMode={() => {
+                    if (isEditMode) {
+                        doneEdit();
+                    } else {
+                        enterEditMode();
+                    }
+                }}
             />
 
             {activeSettingsTab !== null && (

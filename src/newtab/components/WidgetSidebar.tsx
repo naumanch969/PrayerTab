@@ -37,9 +37,10 @@ interface WidgetSidebarProps {
     activeNavTop: number;
     onActiveNavChange: (navId: WidgetNavId, top: number) => void;
     onClearActiveNav: () => void;
+    onToggleEditMode: () => void;
 }
 
-export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onOpenSettings, onAddWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav }) => {
+export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onOpenSettings, onAddWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav, onToggleEditMode }) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -117,7 +118,9 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                         </div>
 
                         <div className="widget-edit-state" onMouseEnter={onClearActiveNav}>
-                            {isEditMode ? 'Edit mode active while sidebar is open' : 'Open sidebar to edit layout'}
+                            <button className="widget-edit-toggle" type="button" onClick={onToggleEditMode}>
+                                {isEditMode ? 'Exit edit mode' : 'Enter edit mode'}
+                            </button>
                         </div>
                     </div>
 

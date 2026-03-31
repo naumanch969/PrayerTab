@@ -33,21 +33,25 @@ const WEATHER_LABELS: Record<number, string> = {
 
 const WeatherWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
   const [snapshot, setSnapshot] = useState<WeatherSnapshot | null>(null);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
 
   useEffect(() => {
     const location = settings.location;
     if (!location) {
       setSnapshot(null);
+      setStatus('idle');
       return;
     }
 
     const controller = new AbortController();
     const fetchWeather = async () => {
+      setStatus('loading');
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto`;
         const res = await fetch(url, { signal: controller.signal });
         if (!res.ok) {
           setSnapshot(null);
+          setStatus('error');
           return;
         }
         const data = await res.json();
@@ -58,13 +62,16 @@ const WeatherWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
         const min = Number(data?.daily?.temperature_2m_min?.[0]);
         if ([temp, weatherCode, max, min].some((n) => Number.isNaN(n))) {
           setSnapshot(null);
+          setStatus('error');
           return;
         }
 
         setSnapshot({ temp, weatherCode, max, min });
+        setStatus('ready');
       } catch {
-        // Silent fallback to placeholder values when offline or blocked.
+        // Keep state explicit to avoid showing fake weather values.
         setSnapshot(null);
+        setStatus('error');
       }
     };
 
@@ -73,18 +80,25 @@ const WeatherWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
   }, [settings.location]);
 
   const weatherLabel = useMemo(() => {
-    if (!snapshot) return settings.location ? 'Fetching weather…' : 'Set location in Settings';
+    if (!settings.location) return 'Set location in Settings';
+    if (status === 'loading') return 'Fetching weather…';
+    if (status === 'error') return 'Weather unavailable';
+    if (!snapshot) return 'Weather unavailable';
     return WEATHER_LABELS[snapshot.weatherCode] ?? 'Local forecast';
-  }, [settings.location, snapshot]);
+  }, [settings.location, snapshot, status]);
 
   return (
     <div className="sample-widget sample-weather">
       <div className="sample-widget-label">Weather</div>
       <div className="sample-weather-row">
-        <div className="sample-weather-big">{Math.round(snapshot?.temp ?? 23)}°</div>
+        <div className="sample-weather-big">{snapshot ? `${Math.round(snapshot.temp)}°` : '--'}</div>
         <div className="sample-weather-metrics">
           <span>{weatherLabel}</span>
-          <span>H: {Math.round(snapshot?.max ?? 28)}° · L: {Math.round(snapshot?.min ?? 19)}°</span>
+          <span>
+            {snapshot
+              ? `H: ${Math.round(snapshot.max)}° · L: ${Math.round(snapshot.min)}°`
+              : 'H: -- · L: --'}
+          </span>
         </div>
       </div>
     </div>

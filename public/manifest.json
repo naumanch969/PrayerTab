@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Prayer Tab",
+  "name": "5PrayerTab",
   "description": "Every tab, a new intention. Prayer times, daily Ayah, and mindful focus for Muslims.",
   "version": "1.0.0",
   "chrome_url_overrides": {

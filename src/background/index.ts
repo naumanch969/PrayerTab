@@ -1,4 +1,4 @@
-// Niyyah Tab background script
+// 5PrayerTab background script
 // Currently initialized as an empty module
 
 export {};

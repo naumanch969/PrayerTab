@@ -1,21 +1,26 @@
-# 3TabSaver
+# 5PrayerTab
 
-A very simple way to clear your head by clearing your tabs. 
+A spiritual new-tab dashboard for Muslims focused on prayer awareness, reflection, and intentional daily flow.
 
 ## What it does
-- Save all your open tabs into a workspace
-- Close them to focus on your current task
-- Open them all at once when you're ready to pick up where you left off
-- Automatically remembers your last session
+- Guides first-run setup for name, location, and prayer calculation method
+- Shows widget-based Salah and reflection tools on your new tab
+- Supports a customizable widget canvas (add, remove, move, resize)
+- Persists your layout and core states locally in browser storage
 
-## How to use
-1. Click **Save Current Session**
-2. Give it a name (like "Client Research" or "Shopping")
-3. Click **Save & Close All** to clear your window
-4. Your workspaces are listed right there whenever you open the extension again
+## Core Widgets
+- Prayer Times
+- Next Prayer Countdown
+- Hijri Date
+- Qibla Compass
+- Ramadan Countdown
+- Daily Ayah
+- Dhikr Counter / Tasbeeh
+- Focus Task
+- Prayer Streak
+- Weather
+- Bookmarks
+- Note
 
-## Colors
-You can tag your workspaces with colors to keep them organized.
-
----
-Built with pride for deep focus.
+## Local-First Philosophy
+User settings and daily state are stored locally. The extension uses network requests only for selected external data sources (for example geocoding, background images, and weather APIs).

@@ -48,6 +48,17 @@ export function normalizeLayout(widgetId: WidgetId, layout: WidgetLayout): Widge
     return { ...layout, w, h };
 }
 
+export function clampLayoutToViewport(layout: WidgetLayout): WidgetLayout {
+    const maxX = Math.max(0, window.innerWidth - layout.w - 10);
+    const maxY = Math.max(0, window.innerHeight - layout.h - 10);
+
+    return {
+        ...layout,
+        x: clamp(layout.x, 0, maxX),
+        y: clamp(layout.y, 0, maxY),
+    };
+}
+
 export function getSizeTier(layout: WidgetLayout, mode: WidgetDisplayMode): 'small' | 'medium' | 'large' {
     if (mode === 'compact') return 'small';
     if (mode === 'expanded') return 'large';

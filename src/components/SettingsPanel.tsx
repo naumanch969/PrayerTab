@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { UserSettings, CalculationMethod } from '../types';
 import { BACKGROUNDS } from '../newtab/constants';
-import { RefreshCcw, Image as ImageIcon, Film, Link as LinkIcon, Search, Upload, Palette, Heart, X, ChevronDown, MessageCircle } from 'lucide-react';
+import { RefreshCcw, Image as ImageIcon, Link as LinkIcon, Search, X, ChevronDown, MessageCircle } from 'lucide-react';
 
 interface SettingsPanelProps {
   activeTab: string;
@@ -24,38 +24,13 @@ const BG_SIDEBAR_ITEMS = [
   { id: 'collections', label: 'Collections', icon: RefreshCcw },
   { id: 'search', label: 'Image search', icon: ImageIcon },
   { id: 'url', label: 'Image url', icon: LinkIcon },
-  { id: 'upload', label: 'Upload', icon: Upload },
-  { id: 'solid', label: 'Solid color', icon: Palette },
-  { id: 'favorites', label: 'Favorite images', icon: Heart },
 ];
 
 const MOCK_CATEGORIES = [
   {
     name: 'All',
-    items: [
-      { name: 'Wallpapers', url: BACKGROUNDS[0] },
-      { name: 'All collections', url: BACKGROUNDS[1] },
-      { name: 'Custom', url: BACKGROUNDS[2] },
-    ]
+    items: BACKGROUNDS.map((url, i) => ({ name: `Preset ${i + 1}`, url })),
   },
-  {
-    name: 'Holidays',
-    items: [
-      { name: 'Christmas', url: 'https://images.unsplash.com/photo-1576692155415-95f822cd20ee?w=600&q=80' },
-      { name: 'Halloween', url: 'https://images.unsplash.com/photo-1508361001413-7a9dca21d08a?w=600&q=80' },
-      { name: 'Thanksgiving', url: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=600&q=80' },
-      { name: 'Birthday', url: 'https://images.unsplash.com/photo-1530103862676-de8892ebe853?w=600&q=80' },
-    ]
-  },
-  {
-    name: 'Nature',
-    items: [
-      { name: 'Nature', url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&q=80' },
-      { name: 'Winter', url: 'https://images.unsplash.com/photo-1478265409131-1f65c88f965c?w=600&q=80' },
-      { name: 'Spring', url: 'https://images.unsplash.com/photo-1490750967868-88cb44cb2753?w=600&q=80' },
-      { name: 'Summer', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80' },
-    ]
-  }
 ];
 
 const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSettings) => void; onClose: () => void; }> = ({ settings, onSave, onClose }) => {
@@ -78,7 +53,7 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
     setTimeout(() => {
       const query = encodeURIComponent(search.trim());
       // Generate 12 distinct images using loremflickr keyword caching mechanism
-      const results = Array.from({ length: 12 }).map((_, i) => 
+      const results = Array.from({ length: 12 }).map((_, i) =>
         `https://loremflickr.com/1920/1080/${query}?lock=${i + 1}`
       );
       setSearchResults(results);
@@ -116,13 +91,6 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
       <div className="bg-modal-content">
         <button className="bg-modal-close" onClick={onClose}><X size={20} /></button>
 
-        <div className="bg-autochange-header">
-          <label>Period of background autochange</label>
-          <div className="bg-dropdown">
-            Every 6 hours <ChevronDown size={14} />
-          </div>
-        </div>
-
         <div className="bg-content-scroll">
           {activeMenu === 'collections' && (
             <div className="bg-collections-view">
@@ -146,13 +114,13 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
 
           {activeMenu === 'search' && (
             <div className="bg-search-view">
-              <label 
-                className="settings-label" 
+              <label
+                className="settings-label"
                 style={{ color: 'var(--gold)', textTransform: 'none', fontSize: '12px' }}
               >
                 Enter the keyword for the search
               </label>
-              
+
               <div className="bg-search-input-wrapper">
                 <ImageIcon size={20} className="bg-search-icon-left" />
                 <input
@@ -177,7 +145,7 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
                   searchResults.map(url => (
                     <div key={url} className="bg-search-card" onClick={() => handleSelectBg(url)}>
                       <div className={`bg-search-img ${bgUrl === url ? 'active' : ''}`} style={{ backgroundImage: `url(${url})` }}>
-                         {bgUrl === url && <div className="bg-preset-check">✓</div>}
+                        {bgUrl === url && <div className="bg-preset-check">✓</div>}
                       </div>
                     </div>
                   ))
@@ -194,24 +162,19 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
             <div className="bg-view-panel">
               <label className="settings-label">Paste Image URL manually</label>
               <div className="bg-search-input-wrapper" style={{ marginTop: '12px' }}>
-                 <input
-                   className="bg-search-input"
-                   style={{ paddingLeft: '16px' }}
-                   placeholder="https://..."
-                   value={manualUrl}
-                   onChange={(e) => setManualUrl(e.target.value)}
-                   onKeyDown={(e) => { if (e.key === 'Enter') applyManualUrl(); }}
-                 />
-                 <button className="bg-search-submit" onClick={applyManualUrl}>Apply</button>
+                <input
+                  className="bg-search-input"
+                  style={{ paddingLeft: '16px' }}
+                  placeholder="https://..."
+                  value={manualUrl}
+                  onChange={(e) => setManualUrl(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') applyManualUrl(); }}
+                />
+                <button className="bg-search-submit" onClick={applyManualUrl}>Apply</button>
               </div>
             </div>
           )}
 
-          {['gif', 'upload', 'solid', 'favorites'].includes(activeMenu) && (
-            <div className="bg-view-panel">
-              <div className="settings-placeholder">This feature is coming soon in a future update.</div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -269,15 +232,14 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
                 <button className="settings-method-btn">System UI</button>
               </div>
             </div>
-            
+
             <div className="settings-section">
               <label className="settings-label">Theme Mode</label>
               <div className="settings-method-grid">
                 <button className="settings-method-btn active">Dark (Glassmorphism)</button>
-                <button className="settings-method-btn" disabled>Light (Coming Soon)</button>
               </div>
             </div>
-            
+
             <div className="settings-section">
               <label className="settings-label">Widget Opacity</label>
               <input type="range" min="0" max="100" defaultValue="40" className="settings-slider" />
@@ -301,7 +263,7 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
                 placeholder="How should we address you?"
               />
             </div>
-            
+
             <div className="settings-section">
               <label className="settings-label">Prayer Calculation Method</label>
               <div className="settings-method-grid">
@@ -331,17 +293,17 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
 
         {tab === 'about' && (
           <div className="settings-about-wrapper">
-             <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
-             <h2 className="about-heading">5PrayerTab</h2>
-             <p className="about-version">Version 1.0.0</p>
-             <p className="about-desc">A serene, focus-driven dashboard designed to keep your intentions, prayers, and daily reflections perfectly aligned throughout the day.</p>
-             <div className="about-links">
-               <a href="#" className="about-link">Privacy Policy</a>
-               <span className="dot-sep">•</span>
-               <a href="#" className="about-link">Terms of Service</a>
-               <span className="dot-sep">•</span>
-               <a href="https://github.com/your-repo/5PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
-             </div>
+            <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <h2 className="about-heading">5PrayerTab</h2>
+            <p className="about-version">Version 1.0.0</p>
+            <p className="about-desc">A serene, focus-driven dashboard designed to keep your intentions, prayers, and daily reflections perfectly aligned throughout the day.</p>
+            <div className="about-links">
+              <a href="#" className="about-link">Privacy Policy</a>
+              <span className="dot-sep">•</span>
+              <a href="#" className="about-link">Terms of Service</a>
+              <span className="dot-sep">•</span>
+              <a href="https://github.com/your-repo/5PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
+            </div>
           </div>
         )}
 
@@ -350,10 +312,10 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
             <MessageCircle className="feedback-icon" size={48} />
             <h2 className="feedback-heading">We value your input</h2>
             <p className="feedback-desc">Notice a bug? Have an idea for a new widget? We'd love to hear your thoughts to help us improve 5PrayerTab.</p>
-            <textarea 
-               className="settings-textarea" 
-               placeholder="Describe your suggestion or issue here..."
-               rows={6}
+            <textarea
+              className="settings-textarea"
+              placeholder="Describe your suggestion or issue here..."
+              rows={6}
             />
             <button className="settings-action-btn primary full-width" onClick={() => window.open('mailto:support@example.com?subject=5PrayerTab Feedback')}>
               Send via Email
