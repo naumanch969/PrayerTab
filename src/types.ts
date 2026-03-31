@@ -2,6 +2,22 @@
 
 export type PrayerName = 'Fajr' | 'Sunrise' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
 
+export type WidgetId =
+  | 'prayer-times'
+  | 'next-prayer'
+  | 'hijri-date'
+  | 'clock'
+  | 'daily-ayah'
+  | 'focus-task'
+  | 'dhikr-counter'
+  | 'prayer-streak'
+  | 'qibla-compass'
+  | 'weather'
+  | 'tasbeeh'
+  | 'ramadan-countdown'
+  | 'bookmarks'
+  | 'note';
+
 export type CalculationMethod =
   | 'MWL'
   | 'ISNA'
@@ -48,6 +64,8 @@ export interface UserSettings {
   calculationMethod: CalculationMethod;
   location: Location | null;
   onboardingComplete: boolean;
+  hasSeenCustomizePrompt: boolean;
+  enabledWidgets: WidgetId[];
 }
 
 // ── Streak & Prayer Log ───────────────────────────────────────────────────────

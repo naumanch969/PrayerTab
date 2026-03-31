@@ -45,6 +45,8 @@ const DEFAULT_SETTINGS: UserSettings = {
   calculationMethod: 'MWL',
   location: null,
   onboardingComplete: false,
+  hasSeenCustomizePrompt: false,
+  enabledWidgets: [],
 };
 
 const DEFAULT_INTENTION: Intention = { text: '', date: todayIso() };
@@ -53,7 +55,7 @@ const DEFAULT_INTENTION: Intention = { text: '', date: todayIso() };
 
 export async function getSettings(): Promise<UserSettings> {
   const stored = await readRaw('settings') as UserSettings | undefined;
-  return stored ?? DEFAULT_SETTINGS;
+  return stored ? { ...DEFAULT_SETTINGS, ...stored } : DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(settings: UserSettings): Promise<void> {
