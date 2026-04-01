@@ -17,7 +17,7 @@ function getGreeting(hour: number): string {
   return 'Tisbah \'ala Khayr';                           // Good night
 }
 
-export function useClock(): ClockState {
+export function useClock(format: '12h' | '24h' = '12h', showSeconds = false): ClockState {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -28,7 +28,8 @@ export function useClock(): ClockState {
   const timeString = now.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true,
+    second: showSeconds ? '2-digit' : undefined,
+    hour12: format === '12h',
   });
 
   return { now, timeString, greeting: getGreeting(now.getHours()) };

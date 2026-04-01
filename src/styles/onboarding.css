@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse at 30% 40%, rgba(212, 168, 67, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 40%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 8%, transparent) 0%, transparent 60%),
     #080604;
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
 }
 
 .ob-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.ob-logo-arabic { font-family: 'Amiri', serif; font-size: 22px; color: var(--gold); direction: rtl; }
+.ob-logo-arabic { font-family: 'Amiri', serif; font-size: 22px; color: var(--theme-accent, #d4a843); direction: rtl; }
 .ob-logo-name   { font-family: 'Fraunces', serif; font-size: 15px; color: var(--t2); letter-spacing: 0.05em; }
 
 .ob-title    { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 400; color: var(--t1); text-align: center; }
@@ -52,7 +52,7 @@
 .ob-btn {
   width: 100%;
   padding: 14px;
-  background: var(--gold);
+  background: var(--theme-accent, #d4a843);
   color: #0d0b06;
   border-radius: var(--radius-sm);
   font-size: 15px;
@@ -144,7 +144,7 @@
 .ob-btn-secondary {
   background: var(--gold-dim);
   border: 1px solid var(--gold-glow);
-  color: var(--gold);
+  color: var(--theme-accent, #d4a843);
   padding: 10px 14px;
   border-radius: var(--radius-xs);
   font-size: 12px;
@@ -153,7 +153,7 @@
 }
 
 .ob-btn-secondary:hover:not(:disabled) {
-  background: var(--gold);
+  background: var(--theme-accent, #d4a843);
   color: #0d0b06;
 }
 
@@ -170,7 +170,7 @@
   background: var(--glass-border);
   transition: background 0.2s, transform 0.2s;
 }
-.ob-step-dot.active { background: var(--gold); transform: scale(1.3); }
+.ob-step-dot.active { background: var(--theme-accent, #d4a843); transform: scale(1.3); }
 .ob-step-dot.done   { background: var(--green); }
 
 /* ─────────────────────────────────────────────────────────────────────────── */

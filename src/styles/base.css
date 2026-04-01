@@ -10,9 +10,9 @@
   --t2:    #b8b4ab;
   --t3:    #7a7670;
 
-  --gold:       #d4a843;
-  --gold-dim:   rgba(212, 168, 67, 0.15);
-  --gold-glow:  rgba(212, 168, 67, 0.30);
+  --gold:       var(--theme-accent, #d4a843);
+  --gold-dim:   color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 15%, transparent);
+  --gold-glow:  color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 30%, transparent);
 
   --green:      #4caf7d;
   --green-dim:  rgba(76, 175, 125, 0.18);
@@ -41,3 +41,13 @@ body {
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 input, textarea { font-family: inherit; }
 
+/* Font Themes */
+.nt-root[data-font="inter"] {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.nt-root[data-font="fraunces"] {
+  font-family: 'Fraunces', Georgia, serif;
+}
+.nt-root[data-font="system"] {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}

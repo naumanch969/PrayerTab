@@ -2,7 +2,7 @@
 	border-radius: 22px;
 	padding: 14px;
 	background: linear-gradient(180deg, rgba(26, 22, 14, 0.9), rgba(14, 12, 8, 0.86));
-	border: 1px solid rgba(212, 168, 67, 0.32);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 32%, transparent);
 	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 	text-align: center;
 	align-items: center;
@@ -10,7 +10,7 @@
 
 .sample-next-prayer .sample-widget-label { color: rgba(217, 182, 106, 0.74); }
 .sample-next-prayer .sample-next-name { color: rgba(219, 205, 173, 0.8); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
-.sample-next-prayer .sample-next-time { font-size: clamp(30px, 4.2vw, 52px); color: rgba(255, 241, 206, 0.98); font-variant-numeric: tabular-nums; text-shadow: 0 0 26px rgba(212, 168, 67, 0.26); }
+.sample-next-prayer .sample-next-time { font-size: clamp(30px, 4.2vw, 52px); color: rgba(255, 241, 206, 0.98); font-variant-numeric: tabular-nums; text-shadow: 0 0 26px color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 26%, transparent); }
 .sample-next-prayer .sample-widget-sub { color: rgba(191, 171, 126, 0.74); }
-.sample-next-prayer .sample-progress-bar { width: 100%; background: rgba(212, 168, 67, 0.16); }
-.sample-next-prayer .sample-progress-bar span { background: linear-gradient(90deg, rgba(212, 168, 67, 0.4), rgba(212, 168, 67, 0.96)); }
+.sample-next-prayer .sample-progress-bar { width: 100%; background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent); }
+.sample-next-prayer .sample-progress-bar span { background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 40%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 96%, transparent)); }

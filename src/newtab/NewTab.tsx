@@ -1,12 +1,13 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { Check, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { RotateCcw, RotateCw, X, Check, Search, Plus, Trash2, Layout } from 'lucide-react';
 import { useStorage } from '../hooks/useStorage';
 import Onboarding from '../components/Onboarding';
 import SettingsPanel from '../components/SettingsPanel';
-import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout } from '../types';
+import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout, LayoutPreset, InnerWidgetPreference } from '../types';
 import type { WidgetRuntimeData } from '../widgets/types';
 
-import { NAV_WIDGETS } from './constants';
+import { NAV_WIDGETS, WIDGET_LOOKUP } from './constants';
+import { SYSTEM_PRESETS } from './presets';
 import { clampLayoutToViewport, defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
 import type { WidgetNavId } from './types';
 
@@ -32,7 +33,27 @@ const NewTab: React.FC = () => {
     const settingsRef = useRef<UserSettings | null>(null);
 
     const defaultBg = useMemo(() => getDailyBackground(new Date()), []);
-    const bg = storage.settings?.background || defaultBg;
+
+    const bgStyle = useMemo(() => {
+        const source = storage.settings?.backgroundSource;
+        const bgVal = storage.settings?.background;
+        
+        if (storage.settings?.backgroundDailyRotation) {
+            return { backgroundImage: `url(${getDailyBackground(new Date())})` };
+        }
+        
+        if (source === 'solid' && bgVal) {
+            return { backgroundColor: bgVal };
+        }
+        if (source === 'gradient' && bgVal) {
+            return { backgroundImage: bgVal };
+        }
+        
+        const urlToUse = bgVal || defaultBg;
+        return { backgroundImage: `url(${urlToUse})` };
+    }, [storage.settings, defaultBg]);
+
+    const overlayOpacity = storage.settings?.backgroundOverlayOpacity ?? 0;
 
     useEffect(() => {
         settingsRef.current = storage.settings ?? null;
@@ -70,6 +91,9 @@ const NewTab: React.FC = () => {
         isEditMode,
         storage.settings?.widgetLayouts ?? {},
         (layouts) => {
+            if (isEditMode) {
+                pushUndoSnapshot();
+            }
             if (settingsRef.current) {
                 void storage.updateSettings({
                     ...settingsRef.current,
@@ -171,6 +195,42 @@ const NewTab: React.FC = () => {
         persistSettings({ widgetLayouts: nextLayouts as Record<WidgetId, WidgetLayout> });
     };
 
+    const applyPreset = (preset: LayoutPreset) => {
+        if (!isEditMode) {
+            enterEditMode();
+        } else {
+            pushUndoSnapshot();
+        }
+
+        setLayoutDraft(preset.layouts);
+        persistSettings({
+            enabledWidgets: preset.widgets,
+            widgetLayouts: preset.layouts as Record<WidgetId, WidgetLayout>,
+            widgetPreferences: preset.preferences as Record<WidgetId, InnerWidgetPreference>,
+        });
+    };
+
+    const saveCustomPreset = (name: string) => {
+        if (!settings) return;
+        
+        const newPreset: LayoutPreset = {
+            id: `custom-${Date.now()}`,
+            name,
+            widgets: [...addedWidgets],
+            layouts: cloneLayouts(layoutDraft),
+            preferences: { ...settings.widgetPreferences },
+        };
+
+        const nextCustomPresets = [...(settings.customPresets || []), newPreset];
+        persistSettings({ customPresets: nextCustomPresets });
+    };
+
+    const deleteCustomPreset = (presetId: string) => {
+        if (!settings || !settings.customPresets) return;
+        const nextCustomPresets = settings.customPresets.filter((p) => p.id !== presetId);
+        persistSettings({ customPresets: nextCustomPresets });
+    };
+
     useEffect(() => {
         if (!isEditMode) return;
 
@@ -181,14 +241,18 @@ const NewTab: React.FC = () => {
                 return;
             }
 
-            const isUndo = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z';
+            const isUndo = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey;
+            const isRedo = (event.ctrlKey || event.metaKey) && (
+                (event.shiftKey && event.key.toLowerCase() === 'z') || 
+                (event.key.toLowerCase() === 'y')
+            );
+
             if (isUndo) {
                 event.preventDefault();
-                if (event.shiftKey) {
-                    redoEdit();
-                } else {
-                    undoEdit();
-                }
+                undoEdit();
+            } else if (isRedo) {
+                event.preventDefault();
+                redoEdit();
             }
         };
 
@@ -270,6 +334,7 @@ const NewTab: React.FC = () => {
         intention: storage.intention,
         togglePrayer: storage.togglePrayer,
         tapDhikr: storage.tapDhikr,
+        resetDhikr: storage.resetDhikr,
         setIntention: storage.setIntention,
     };
 
@@ -329,9 +394,9 @@ const NewTab: React.FC = () => {
     };
 
     return (
-        <div className="nt-root">
-            <div className="nt-bg" style={{ backgroundImage: `url(${bg})` }} />
-            <div className="nt-overlay" />
+        <div className="nt-root" data-theme={settings.themeMode || 'glass'} data-font={settings.fontFamily || 'inter'} style={{ '--theme-accent': settings.themeAccent || '#d4a843' } as React.CSSProperties}>
+            <div className="nt-bg" style={bgStyle} />
+            <div className="nt-overlay" style={{ opacity: overlayOpacity / 100 }} />
 
             {showCustomizePrompt && (
                 <div className="nt-customise-prompt" role="status" aria-live="polite">
@@ -365,6 +430,7 @@ const NewTab: React.FC = () => {
                         isActiveSettings={activeWidgetSettingsId === widgetId}
                         onToggleSettings={(id) => setActiveWidgetSettingsId((curr) => (curr === id ? null : id))}
                         onSetDisplayMode={setWidgetDisplayMode}
+                        onEnterEditMode={enterEditMode}
                         settings={settings}
                         runtime={widgetRuntime}
                     />

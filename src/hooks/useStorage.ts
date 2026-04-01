@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getSettings, saveSettings,
   getPrayerLogs, getTodayLog, markPrayer, calculateStreak,
-  getDhikr, saveDhikr, incrementDhikr,
+  getDhikr, saveDhikr, incrementDhikr, resetDhikr,
   getIntention, saveIntention,
 } from '../lib/storage';
 import type {
@@ -27,6 +27,7 @@ interface StorageActions {
   updateSettings: (s: UserSettings) => Promise<void>;
   togglePrayer: (name: keyof Omit<DailyPrayerLog, 'date'>, status: PrayerStatus) => Promise<void>;
   tapDhikr: () => Promise<void>;
+  resetDhikr: () => Promise<void>;
   setIntention: (text: string) => Promise<void>;
 }
 
@@ -87,6 +88,11 @@ export function useStorage(): StorageState & StorageActions {
     });
   }, []);
 
+  const resetDhikrAction = useCallback(async () => {
+    const next = await resetDhikr();
+    setState((s) => ({ ...s, dhikr: next }));
+  }, []);
+
   const setIntention = useCallback(async (text: string) => {
     await saveIntention(text);
     setState((s) => ({
@@ -95,5 +101,5 @@ export function useStorage(): StorageState & StorageActions {
     }));
   }, []);
 
-  return { ...state, updateSettings, togglePrayer, tapDhikr, setIntention };
+  return { ...state, updateSettings, togglePrayer, tapDhikr, resetDhikr: resetDhikrAction, setIntention };
 }

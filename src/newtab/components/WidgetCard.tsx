@@ -17,14 +17,33 @@ interface WidgetCardProps {
     isActiveSettings: boolean;
     onToggleSettings: (widgetId: WidgetId) => void;
     onSetDisplayMode: (widgetId: WidgetId, mode: WidgetDisplayMode) => void;
+    onEnterEditMode: () => void;
     settings: UserSettings;
     runtime: WidgetRuntimeData;
     index: number;
 }
 
-export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, settings, runtime, index }) => {
+export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, onEnterEditMode, settings, runtime, index }) => {
     const widget = WIDGET_LOOKUP[widgetId];
+    const longPressTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
     if (!widget) return null; // Safe guard against corrupt memory or unknown widgets
+
+    const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
+        if (!isEditMode) {
+            longPressTimer.current = setTimeout(() => {
+                onEnterEditMode();
+            }, 600);
+        }
+        onDragStart(widgetId, index, event);
+    };
+
+    const handlePointerUp = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    };
 
     const sizeTier = getSizeTier(layout, displayMode);
 
@@ -32,7 +51,9 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
         <article
             className={`canvas-widget ${isEditMode ? 'edit-mode' : ''} ${sizeTier}`}
             style={{ left: layout.x, top: layout.y, width: layout.w, height: layout.h }}
-            onPointerDown={(event) => onDragStart(widgetId, index, event)}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
         >
             <WidgetRenderer
                 widgetId={widgetId}

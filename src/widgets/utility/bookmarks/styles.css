@@ -2,14 +2,14 @@
 	border-radius: 16px;
 	padding: 10px;
 	background: linear-gradient(165deg, rgba(253, 248, 234, 0.96), rgba(245, 235, 209, 0.9));
-	border: 1px solid rgba(212, 168, 67, 0.24);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 24%, transparent);
 	color: rgba(75, 54, 19, 0.94);
 }
 
 .sample-bookmarks .sample-widget-label { color: rgba(121, 91, 39, 0.68); }
-.sample-bookmarks .sample-bookmark-list { border-radius: 12px; border: 1px solid rgba(212, 168, 67, 0.18); background: rgba(255, 250, 239, 0.72); overflow: hidden; }
-.sample-bookmarks .sample-bookmark-row { border-bottom-color: rgba(212, 168, 67, 0.16); }
-.sample-bookmarks .sample-bookmark-row:hover { background: rgba(212, 168, 67, 0.1); }
-.sample-bookmarks .sample-bookmark-dot { background: rgba(212, 168, 67, 0.9); }
+.sample-bookmarks .sample-bookmark-list { border-radius: 12px; border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent); background: rgba(255, 250, 239, 0.72); overflow: hidden; }
+.sample-bookmarks .sample-bookmark-row { border-bottom-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent); }
+.sample-bookmarks .sample-bookmark-row:hover { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 10%, transparent); }
+.sample-bookmarks .sample-bookmark-dot { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent); }
 .sample-bookmarks .sample-bookmark-row span { color: rgba(87, 64, 20, 0.92); }
 .sample-bookmarks .sample-bookmark-row small { color: rgba(121, 97, 53, 0.74); }

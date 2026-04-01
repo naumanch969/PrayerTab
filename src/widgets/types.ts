@@ -7,6 +7,7 @@ export interface WidgetRuntimeData {
   intention: Intention | null;
   togglePrayer: (name: keyof Omit<DailyPrayerLog, 'date'>, status: PrayerStatus) => Promise<void>;
   tapDhikr: () => Promise<void>;
+  resetDhikr: () => Promise<void>;
   setIntention: (text: string) => Promise<void>;
 }
 

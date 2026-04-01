@@ -2,7 +2,7 @@
 	border-radius: 18px;
 	padding: 12px;
 	background: linear-gradient(170deg, rgba(248, 243, 232, 0.96), rgba(241, 230, 206, 0.94));
-	border: 1px solid rgba(212, 168, 67, 0.24);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 24%, transparent);
 	color: rgba(82, 57, 12, 0.96);
 	align-items: center;
 	text-align: center;
@@ -10,7 +10,7 @@
 }
 
 .sample-dhikr .sample-widget-label { color: rgba(122, 88, 27, 0.66); }
-.sample-dhikr .sample-dhikr-count { width: clamp(64px, 8vw, 90px); height: clamp(64px, 8vw, 90px); border-radius: 999px; border: 2px solid rgba(212, 168, 67, 0.5); background: radial-gradient(circle, rgba(255, 252, 242, 0.9), rgba(241, 225, 189, 0.65)); color: rgba(100, 70, 14, 0.98); font-size: clamp(22px, 3.2vw, 34px); }
+.sample-dhikr .sample-dhikr-count { width: clamp(64px, 8vw, 90px); height: clamp(64px, 8vw, 90px); border-radius: 999px; border: 2px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent); background: radial-gradient(circle, rgba(255, 252, 242, 0.9), rgba(241, 225, 189, 0.65)); color: rgba(100, 70, 14, 0.98); font-size: clamp(22px, 3.2vw, 34px); }
 .sample-dhikr .sample-widget-sub { color: rgba(114, 84, 24, 0.72); }
-.sample-dhikr .sample-progress-bar { width: 100%; background: rgba(212, 168, 67, 0.18); }
-.sample-dhikr .sample-progress-bar span { background: linear-gradient(90deg, rgba(170, 120, 21, 0.72), rgba(212, 168, 67, 1)); }
+.sample-dhikr .sample-progress-bar { width: 100%; background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent); }
+.sample-dhikr .sample-progress-bar span { background: linear-gradient(90deg, rgba(170, 120, 21, 0.72), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 100%, transparent)); }

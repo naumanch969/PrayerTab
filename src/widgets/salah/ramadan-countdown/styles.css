@@ -3,8 +3,8 @@
 	padding: 14px;
 	background:
 		linear-gradient(145deg, rgba(7, 35, 26, 0.9), rgba(7, 29, 24, 0.93)),
-		radial-gradient(circle at 80% 18%, rgba(212, 168, 67, 0.2), rgba(212, 168, 67, 0));
-	border: 1px solid rgba(212, 168, 67, 0.3);
+		radial-gradient(circle at 80% 18%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 0%, transparent));
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 30%, transparent);
 	color: rgba(232, 244, 228, 0.96);
 	position: relative;
 	overflow: hidden;
@@ -14,7 +14,7 @@
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(120deg, rgba(212, 168, 67, 0.12), rgba(212, 168, 67, 0) 45%);
+	background: linear-gradient(120deg, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 12%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 0%, transparent) 45%);
 	pointer-events: none;
 }
 
@@ -26,4 +26,4 @@
 .sample-ramadan .sample-widget-title { color: rgba(248, 252, 242, 0.98); font-size: clamp(22px, 3.3vw, 40px); }
 .sample-ramadan .sample-widget-sub { color: rgba(198, 218, 188, 0.74); }
 .sample-ramadan .sample-dot-progress span { background: rgba(222, 247, 216, 0.2); }
-.sample-ramadan .sample-dot-progress span.on { background: rgba(212, 168, 67, 0.95); }
+.sample-ramadan .sample-dot-progress span.on { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 95%, transparent); }

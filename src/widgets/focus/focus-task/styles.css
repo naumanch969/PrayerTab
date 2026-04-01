@@ -3,13 +3,13 @@
 	padding: 11px;
 	background: rgba(251, 246, 234, 0.38);
 	backdrop-filter: blur(8px);
-	border: 1px solid rgba(212, 168, 67, 0.26);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 26%, transparent);
 	color: rgba(70, 52, 21, 0.94);
 	box-shadow: 0 10px 24px rgba(53, 37, 12, 0.1);
 }
 
 .sample-focus-task .sample-widget-label { color: rgba(124, 94, 42, 0.65); }
 .sample-focus-task .sample-widget-sub { color: rgba(119, 93, 50, 0.72); }
-.sample-focus-task .sample-focus-input { border-color: rgba(212, 168, 67, 0.32); background: rgba(255, 252, 244, 0.66); color: rgba(62, 46, 19, 0.94); font-weight: 500; }
+.sample-focus-task .sample-focus-input { border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 32%, transparent); background: rgba(255, 252, 244, 0.66); color: rgba(62, 46, 19, 0.94); font-weight: 500; }
 .sample-focus-task .sample-focus-meta { color: rgba(123, 95, 50, 0.65); }
-.sample-focus-task .sample-focus-meta span { background: rgba(212, 168, 67, 0.5); }
+.sample-focus-task .sample-focus-meta span { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent); }

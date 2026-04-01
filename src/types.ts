@@ -72,6 +72,20 @@ export interface Ayah {
 
 // ── User Settings ────────────────────────────────────────────────────────────
 
+export type BackgroundSource = 'library' | 'solid' | 'gradient' | 'upload' | 'url';
+
+export interface InnerWidgetPreference {
+  displayMode: WidgetDisplayMode;
+}
+
+export interface LayoutPreset {
+  id: string;
+  name: string;
+  widgets: WidgetId[];
+  layouts: Partial<Record<WidgetId, WidgetLayout>>;
+  preferences: Partial<Record<WidgetId, InnerWidgetPreference>>;
+}
+
 export interface UserSettings {
   name: string;
   calculationMethod: CalculationMethod;
@@ -79,9 +93,18 @@ export interface UserSettings {
   onboardingComplete: boolean;
   hasSeenCustomizePrompt: boolean;
   background?: string;
+  backgroundSource?: BackgroundSource;
+  backgroundOverlayOpacity?: number;
+  backgroundDailyRotation?: boolean;
+  clockFormat?: '12h' | '24h';
+  clockShowSeconds?: boolean;
+  themeMode?: 'glass' | 'solid' | 'minimal';
+  themeAccent?: string;
+  fontFamily?: 'inter' | 'fraunces' | 'system';
   enabledWidgets: WidgetId[];
   widgetLayouts: Partial<Record<WidgetId, WidgetLayout>>;
-  widgetPreferences: Partial<Record<WidgetId, WidgetPreference>>;
+  widgetPreferences: Partial<Record<WidgetId, InnerWidgetPreference>>;
+  customPresets?: LayoutPreset[];
 }
 
 // ── Streak & Prayer Log ───────────────────────────────────────────────────────

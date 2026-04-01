@@ -46,6 +46,11 @@ const DEFAULT_SETTINGS: UserSettings = {
   location: null,
   onboardingComplete: false,
   hasSeenCustomizePrompt: false,
+  clockFormat: '12h',
+  clockShowSeconds: false,
+  themeMode: 'glass',
+  themeAccent: '#d4a843', // default gold
+  fontFamily: 'inter',
   enabledWidgets: [],
   widgetLayouts: {},
   widgetPreferences: {},
@@ -162,6 +167,12 @@ export function incrementDhikr(state: DhikrState): DhikrState {
   return { ...state, counts: { ...state.counts, [state.current]: newCount } };
 }
 
+export async function resetDhikr(): Promise<DhikrState> {
+  const resetState = { ...DEFAULT_DHIKR, date: todayIso() };
+  await saveDhikr(resetState);
+  return resetState;
+}
+
 // ── Intention ────────────────────────────────────────────────────────────────
 
 export async function getIntention(): Promise<Intention> {
@@ -172,4 +183,58 @@ export async function getIntention(): Promise<Intention> {
 
 export async function saveIntention(text: string): Promise<void> {
   await writeRaw('intention', { text, date: todayIso() });
+}
+
+// ── Data Portability (US-072) ────────────────────────────────────────────────
+
+const EXPORT_VERSION = 1;
+
+export interface ExportBundle {
+  version: number;
+  exportedAt: string;
+  settings: UserSettings;
+  prayerLogs: DailyPrayerLog[];
+  dhikr: DhikrState;
+  intention: Intention;
+}
+
+export async function exportAllData(): Promise<string> {
+  const [settings, prayerLogs, dhikr, intention] = await Promise.all([
+    getSettings(),
+    getPrayerLogs(),
+    getDhikr(),
+    getIntention(),
+  ]);
+
+  const bundle: ExportBundle = {
+    version: EXPORT_VERSION,
+    exportedAt: new Date().toISOString(),
+    settings,
+    prayerLogs,
+    dhikr,
+    intention,
+  };
+
+  return JSON.stringify(bundle, null, 2);
+}
+
+export async function importAllData(jsonString: string): Promise<void> {
+  let bundle: ExportBundle;
+
+  try {
+    bundle = JSON.parse(jsonString) as ExportBundle;
+  } catch {
+    throw new Error('Invalid JSON — could not parse the import file.');
+  }
+
+  if (!bundle.version || !bundle.settings) {
+    throw new Error('Unrecognised export format. Please use a valid 5PrayerTab export file.');
+  }
+
+  await Promise.all([
+    saveSettings(bundle.settings),
+    writeRaw('prayerLogs', bundle.prayerLogs ?? []),
+    saveDhikr(bundle.dhikr ?? DEFAULT_DHIKR),
+    writeRaw('intention', bundle.intention ?? DEFAULT_INTENTION),
+  ]);
 }

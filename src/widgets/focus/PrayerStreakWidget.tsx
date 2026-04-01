@@ -10,42 +10,53 @@ const PRAYERS: Array<{ key: keyof Omit<NonNullable<WidgetComponentProps['runtime
   { key: 'Isha', label: 'I' },
 ];
 
-const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMode }) => {
-  const streak = runtime.streak;
+const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMode, sizeTier }) => {
+  const streak = runtime.streak ?? 0;
   const completedToday = runtime.todayLog
     ? PRAYERS.filter((prayer) => runtime.todayLog?.[prayer.key] === 'completed').length
     : 0;
 
   return (
-    <div className="sample-widget sample-streak">
-      <div className="sample-widget-label">Prayer Streak</div>
-      <div className="sample-streak-head">
-        <span className="sample-streak-value">{streak}</span>
-        <span className="sample-widget-sub">days</span>
+    <div className={`streak-widget ${sizeTier}`}>
+      <div className="streak-main">
+        <div className="streak-value-wrap">
+          <span className="streak-number">{streak}</span>
+          <span className="streak-days-label">Day Streak</span>
+        </div>
+        
+        {sizeTier === 'large' && (
+          <div className="streak-today-stat">
+            {completedToday}/5 Prayers Today
+          </div>
+        )}
       </div>
-      <div className="sample-widget-sub">Today: {completedToday}/5 completed</div>
-      <div className="sample-streak-days">
+
+      <div className="streak-interactive-grid" onPointerDown={(e) => e.stopPropagation()}>
         {PRAYERS.map((prayer) => {
           const status = runtime.todayLog?.[prayer.key] ?? 'pending';
-          const completed = status === 'completed';
+          const isCompleted = status === 'completed';
 
           return (
-          <span
-            key={prayer.key}
-            className={completed ? 'on' : 'today'}
-            onClick={() => {
-              if (isEditMode) return;
-              void runtime.togglePrayer(prayer.key, status);
-            }}
-          >
-            <small>{prayer.label}</small>
-            <i>{completed ? '✓' : '·'}</i>
-          </span>
-        );
+            <button
+              key={prayer.key}
+              className={`streak-dot ${isCompleted ? 'completed' : ''}`}
+              title={`${prayer.key}: ${status}`}
+              onClick={() => {
+                if (isEditMode) return;
+                void runtime.togglePrayer(prayer.key, status);
+              }}
+            >
+              {sizeTier !== 'small' && <span className="streak-dot-label">{prayer.label}</span>}
+              <div className="streak-dot-indicator">
+                {isCompleted && <span className="streak-check">✓</span>}
+              </div>
+            </button>
+          );
         })}
       </div>
     </div>
   );
 };
+
 
 export default PrayerStreakWidget;

@@ -1,13 +1,16 @@
 import React from 'react';
 import './qibla-compass/styles.css';
-import { calculateQibla } from '../../lib/qibla';
+import { calculateQibla, calculateDistanceToKaaba } from '../../lib/qibla';
 import type { WidgetComponentProps } from '../types';
 
-const QiblaCompassWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
+const QiblaCompassWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {
   if (!settings.location) return <div className="widget-body-empty">Set location</div>;
 
-  const bearing = calculateQibla(settings.location.latitude, settings.location.longitude);
-  const direction = (() => {
+  const { latitude, longitude } = settings.location;
+  const bearing = calculateQibla(latitude, longitude);
+  const distance = calculateDistanceToKaaba(latitude, longitude);
+
+  const cardinal = (() => {
     const b = Math.round(bearing);
     if (b >= 337 || b < 23) return 'North';
     if (b < 68) return 'North-East';
@@ -19,17 +22,36 @@ const QiblaCompassWidget: React.FC<WidgetComponentProps> = ({ settings }) => {
     return 'North-West';
   })();
 
-  return (
-    <div className="sample-widget sample-qibla">
-      <div className="sample-widget-label">Qibla</div>
-      <div className="sample-qibla-row">
-        <div className="sample-qibla-ring">
-          <span>N</span>
-          <i style={{ transform: `rotate(${bearing}deg)` }} />
+  if (sizeTier === 'small') {
+    return (
+      <div className="qibla-widget small">
+        <div className="qibla-needle-wrap">
+          <div className="qibla-needle" style={{ transform: `rotate(${bearing}deg)` }} />
         </div>
-        <div>
-          <div className="sample-widget-title">{Math.round(bearing)}°</div>
-          <div className="sample-widget-sub">{direction}</div>
+        <div className="qibla-value">{Math.round(bearing)}°</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`qibla-widget ${sizeTier}`}>
+      <div className="qibla-compass-box">
+        <div className="qibla-ring">
+          <span className="n">N</span>
+          <span className="e">E</span>
+          <span className="s">S</span>
+          <span className="w">W</span>
+          <div className="qibla-bearing-line" style={{ transform: `rotate(${bearing}deg)` }}>
+             <div className="qibla-pointer" />
+          </div>
+        </div>
+        
+        <div className="qibla-info">
+          <div className="qibla-bearing-big">{Math.round(bearing)}°</div>
+          <div className="qibla-cardinal">{cardinal}</div>
+          {sizeTier === 'large' && (
+            <div className="qibla-distance">{distance.toLocaleString()} km to Kaaba</div>
+          )}
         </div>
       </div>
     </div>

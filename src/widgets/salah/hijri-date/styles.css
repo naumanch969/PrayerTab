@@ -2,7 +2,7 @@
 	border-radius: 18px;
 	padding: 12px;
 	background: linear-gradient(160deg, rgba(254, 251, 242, 0.97), rgba(245, 234, 206, 0.88));
-	border: 1px solid rgba(212, 168, 67, 0.24);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 24%, transparent);
 	color: rgba(70, 49, 12, 0.95);
 	position: relative;
 	overflow: hidden;
@@ -16,7 +16,7 @@
 	width: 120px;
 	height: 120px;
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba(212, 168, 67, 0.28), rgba(212, 168, 67, 0));
+	background: radial-gradient(circle, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 28.000000000000004%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 0%, transparent));
 }
 
 .sample-hijri-date .sample-widget-label,

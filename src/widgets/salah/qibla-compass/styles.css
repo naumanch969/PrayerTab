@@ -1,16 +1,16 @@
 .sample-widget.sample-qibla {
 	border-radius: 20px;
 	padding: 12px;
-	background: radial-gradient(circle at 68% 74%, rgba(212, 168, 67, 0.2), rgba(23, 18, 10, 0.96) 52%);
-	border: 1px solid rgba(212, 168, 67, 0.34);
+	background: radial-gradient(circle at 68% 74%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent), rgba(23, 18, 10, 0.96) 52%);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 34%, transparent);
 	color: rgba(249, 236, 198, 0.96);
 	box-shadow: inset 0 1px 0 rgba(255, 242, 212, 0.14);
 }
 
 .sample-qibla .sample-widget-label { color: rgba(224, 190, 116, 0.74); }
 .sample-qibla .sample-qibla-row { align-items: center; justify-content: space-between; }
-.sample-qibla .sample-qibla-ring { width: 72px; height: 72px; border: 1px solid rgba(224, 185, 103, 0.48); background: radial-gradient(circle, rgba(212, 168, 67, 0.22), rgba(212, 168, 67, 0)); }
+.sample-qibla .sample-qibla-ring { width: 72px; height: 72px; border: 1px solid rgba(224, 185, 103, 0.48); background: radial-gradient(circle, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 22%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 0%, transparent)); }
 .sample-qibla .sample-qibla-ring span { color: rgba(232, 203, 141, 0.72); }
-.sample-qibla .sample-qibla-ring i { height: 29px; background: linear-gradient(to bottom, rgba(255, 235, 187, 0.95) 50%, rgba(212, 168, 67, 0.28) 50%); }
+.sample-qibla .sample-qibla-ring i { height: 29px; background: linear-gradient(to bottom, rgba(255, 235, 187, 0.95) 50%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 28.000000000000004%, transparent) 50%); }
 .sample-qibla .sample-widget-title { color: rgba(255, 236, 188, 0.98); }
 .sample-qibla .sample-widget-sub { color: rgba(209, 180, 118, 0.72); }

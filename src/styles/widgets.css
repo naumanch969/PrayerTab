@@ -18,7 +18,7 @@
   backdrop-filter: blur(8px);
   transition: background 0.2s, color 0.2s;
 }
-.nt-settings-btn:hover { background: rgba(212,168,67,0.15); color: var(--gold); }
+.nt-settings-btn:hover { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 15%, transparent); color: var(--theme-accent, #d4a843); }
 
 .widget-canvas {
   position: relative;
@@ -46,12 +46,18 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: linear-gradient(180deg, rgba(11, 10, 8, 0.72), rgba(9, 8, 6, 0.66));
   backdrop-filter: blur(14px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 12px 12px 11px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   cursor: default;
-  transition: border-color 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1), transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.canvas-widget.is-dragging,
+.canvas-widget.is-resizing {
+  transition: none !important;
+  z-index: 100 !important;
 }
 
 .canvas-widget.edit-mode {
@@ -59,6 +65,7 @@
   border-color: rgba(255, 255, 255, 0.26);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
   touch-action: none;
+  user-select: none;
 }
 
 .canvas-widget.edit-mode:active {
@@ -76,7 +83,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  color: rgba(212, 168, 67, 0.9);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent);
 }
 
 .canvas-widget-desc {
@@ -103,151 +110,423 @@
   display: flex;
 }
 
-.widget-body-empty {
-  display: flex;
-  align-items: center;
-  color: rgba(196, 192, 186, 0.84);
-  font-size: 11px;
-}
-
-.widget-body-prayer-times {
+/* ── CLOCK WIDGET ────────────────────────────────────────────────────────── */
+.clock-widget {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-}
-
-.widget-body-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 11px;
-  color: rgba(240, 241, 244, 0.94);
-}
-
-.widget-body-next-prayer,
-.widget-body-hijri,
-.widget-body-streak,
-.widget-body-qibla,
-.widget-body-ayah {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-.widget-body-kicker {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(212, 168, 67, 0.9);
+.clock-greeting {
+  font-size: 14px;
+  color: var(--t2);
+  margin-bottom: 2px;
+  opacity: 0.8;
 }
 
-.widget-body-metric {
-  font-size: 19px;
-  line-height: 1.12;
-  color: rgba(249, 250, 252, 0.98);
+.clock-time {
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--t1);
+  line-height: 1;
 }
 
-.widget-body-submetric {
-  font-size: 11px;
-  color: rgba(194, 191, 184, 0.86);
+.clock-date {
+  font-size: 13px;
+  color: var(--t3);
+  margin-top: 4px;
 }
 
-.widget-body-compass-dot {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 2px solid rgba(212, 168, 67, 0.76);
+.clock-widget.small .clock-time { font-size: 28px; }
+.clock-widget.small .clock-date { font-size: 11px; }
+
+/* ── DHIKR WIDGET ────────────────────────────────────────────────────────── */
+.dhikr-widget {
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 
-.widget-body-compass-dot::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 11px;
-  border-radius: 999px;
-  background: rgba(212, 168, 67, 0.95);
-}
-
-.widget-body-ayah-text {
-  font-family: 'Amiri', serif;
-  font-size: 18px;
-  line-height: 1.5;
-  color: rgba(244, 226, 183, 0.95);
-  direction: rtl;
-}
-
-.widget-body-counter {
+.dhikr-tap-area {
   width: 100%;
   height: 100%;
-  min-height: 62px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: inherit;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
-  padding: 8px;
-}
-
-.widget-body-input,
-.widget-body-textarea {
-  width: 100%;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(0, 0, 0, 0.38);
-  color: rgba(243, 246, 251, 0.98);
-  font-size: 12px;
-  padding: 9px 10px;
-}
-
-.widget-body-textarea {
-  resize: none;
-  min-height: 72px;
-}
-
-.widget-body-bookmarks {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
-.widget-body-chip {
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(242, 245, 249, 0.94);
-  font-size: 10px;
-  letter-spacing: 0.06em;
+.dhikr-label {
+  font-size: 12px;
+  color: var(--t2);
   text-transform: uppercase;
-  padding: 6px 8px;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
 }
 
-.widget-body-streak-dots {
-  display: flex;
-  gap: 5px;
+.dhikr-count {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--theme-accent, #d4a843);
+  line-height: 1;
 }
 
-.widget-body-streak-dots span {
-  width: 7px;
-  height: 7px;
+.dhikr-progress-ring {
+  width: 80%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.32);
+  margin-top: 12px;
+  overflow: hidden;
 }
 
-.widget-body-streak-dots span.on {
-  background: rgba(212, 168, 67, 0.95);
+.dhikr-progress-fill {
+  height: 100%;
+  background: var(--theme-accent, #d4a843);
+  transition: width 0.3s ease;
 }
+
+.dhikr-reset-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── TASBEEH WIDGET ──────────────────────────────────────────────────────── */
+.tasbeeh-widget {
+  width: 100%;
+  height: 100%;
+}
+
+.tasbeeh-tap-area {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tasbeeh-compact-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.tasbeeh-current {
+  font-size: 13px;
+  color: var(--t2);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.tasbeeh-count {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--theme-accent, #d4a843);
+}
+
+.tasbeeh-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.tasbeeh-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tasbeeh-row.active {
+  border-color: var(--theme-accent, #d4a843);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 10%, transparent);
+}
+
+.tasbeeh-row-label {
+  font-size: 13px;
+  color: var(--t2);
+  z-index: 1;
+}
+
+.tasbeeh-row-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--t1);
+  z-index: 1;
+}
+
+.tasbeeh-row-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tasbeeh-row-fill {
+  height: 100%;
+  background: var(--theme-accent, #d4a843);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.focus-task-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.focus-task-label {
+  font-size: 11px;
+  color: var(--t3);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.focus-task-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--t1);
+  font-size: 18px;
+  padding: 8px 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.focus-task-input:focus {
+  border-color: var(--theme-accent, #d4a843);
+}
+
+.focus-timer-section {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.focus-timer-display {
+  font-family: monospace;
+  font-size: 24px;
+  color: var(--t1);
+}
+
+.focus-timer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.timer-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--t2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── STREAK WIDGET ───────────────────────────────────────────────────────── */
+.streak-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.streak-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.streak-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--theme-accent, #d4a843);
+}
+
+.streak-days-label {
+  font-size: 13px;
+  color: var(--t2);
+}
+
+.streak-interactive-grid {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.streak-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.streak-dot-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.streak-dot.completed .streak-dot-indicator {
+  background: var(--theme-accent, #d4a843);
+  border-color: var(--theme-accent, #d4a843);
+}
+
+.streak-check {
+  color: #000;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ── AYAH WIDGET ─────────────────────────────────────────────────────────── */
+.ayah-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ayah-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ayah-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--theme-accent, #d4a843);
+}
+
+.ayah-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+.ayah-arabic {
+  font-family: 'Amiri', serif;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: right;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.ayah-translation {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--t2);
+  font-style: italic;
+}
+
+.ayah-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.ayah-surah-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.ayah-surah-meta {
+  font-size: 11px;
+  color: var(--t3);
+}
+
+.ayah-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.ayah-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--t2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ayah-btn.active {
+  color: var(--theme-accent, #d4a843);
+  border-color: var(--theme-accent, #d4a843);
+}
+
+.ayah-tafsir-btn {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--theme-accent, #d4a843);
+  color: #000;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 
 .canvas-widget-controls {
   position: absolute;
@@ -333,8 +612,8 @@
 }
 
 .canvas-widget-mode-btn.active {
-  border-color: rgba(212, 168, 67, 0.7);
-  background: rgba(212, 168, 67, 0.16);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 70%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
   color: #ffe9b9;
 }
 
@@ -384,7 +663,7 @@
 .widget-plus-btn:hover,
 .widget-mini-btn:hover {
   transform: translateY(-1px);
-  border-color: rgba(212, 168, 67, 0.52);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 52%, transparent);
   background: rgba(14, 13, 11, 0.82);
 }
 
@@ -447,13 +726,13 @@
 }
 
 .nt-edit-tool.primary {
-  border-color: rgba(212, 168, 67, 0.55);
-  background: rgba(212, 168, 67, 0.2);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 55.00000000000001%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent);
   color: #ffe9b9;
 }
 
 .nt-edit-tool.primary:hover {
-  background: rgba(212, 168, 67, 0.28);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 28.000000000000004%, transparent);
 }
 
 .nt-edit-tool.danger {
@@ -513,8 +792,8 @@
 }
 
 .widget-collapse-btn:hover {
-  border-color: rgba(212, 168, 67, 0.5);
-  background: rgba(212, 168, 67, 0.16);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
 }
 
 .widget-sidebar-head {
@@ -526,7 +805,7 @@
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(212, 168, 67, 0.9);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent);
 }
 
 .widget-sidebar-title {
@@ -626,8 +905,8 @@
   height: 24px;
   border-radius: 999px;
   margin-top: 2px;
-  background: rgba(212, 168, 67, 0.16);
-  border: 1px solid rgba(212, 168, 67, 0.36);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 36%, transparent);
   color: rgba(245, 222, 170, 0.95);
   display: inline-flex;
   align-items: center;
@@ -682,8 +961,8 @@
 }
 
 .widget-edit-toggle:hover {
-  border-color: rgba(212, 168, 67, 0.45);
-  background: rgba(212, 168, 67, 0.12);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 45%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 12%, transparent);
 }
 
 .widget-options-flyout {
@@ -715,7 +994,7 @@
 }
 
 .widget-prayer-times-date {
-  color: rgba(212, 168, 67, 0.9);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent);
 }
 
 .widget-prayer-times-grid {
@@ -735,8 +1014,8 @@
 }
 
 .widget-prayer-row.active {
-  border-color: rgba(212, 168, 67, 0.5);
-  background: rgba(212, 168, 67, 0.1);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 10%, transparent);
 }
 
 .widget-prayer-name {
@@ -751,7 +1030,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: rgba(212, 168, 67, 0.92);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 92%, transparent);
 }
 
 .widget-next-prayer {
@@ -782,8 +1061,8 @@
 .widget-next-prayer-segment {
   min-width: 34px;
   border-radius: 10px;
-  border: 1px solid rgba(212, 168, 67, 0.34);
-  background: rgba(212, 168, 67, 0.1);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 34%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 10%, transparent);
   padding: 6px 7px;
   text-align: center;
   font-size: 12px;
@@ -802,8 +1081,8 @@
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  border: 1px solid rgba(212, 168, 67, 0.38);
-  background: rgba(212, 168, 67, 0.12);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 38%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 12%, transparent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -859,7 +1138,7 @@
   width: 2px;
   height: 31px;
   margin-left: -1px;
-  background: linear-gradient(180deg, rgba(255, 236, 192, 0.98), rgba(212, 168, 67, 0.45));
+  background: linear-gradient(180deg, rgba(255, 236, 192, 0.98), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 45%, transparent));
   border-radius: 999px;
   transform-origin: 50% 30px;
 }
@@ -909,7 +1188,7 @@
 .widget-ramadan-bar span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, rgba(212, 168, 67, 0.5), rgba(212, 168, 67, 0.95));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 95%, transparent));
 }
 
 .widget-ramadan-note {
@@ -946,7 +1225,7 @@
 .widget-ayah-ref {
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: rgba(212, 168, 67, 0.9);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent);
 }
 
 .widget-dhikr,
@@ -988,7 +1267,7 @@
 .widget-dhikr-progress span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, rgba(212, 168, 67, 0.5), rgba(212, 168, 67, 0.9));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 90%, transparent));
 }
 
 .widget-tasbeeh-word {
@@ -1009,7 +1288,7 @@
 }
 
 .widget-tasbeeh-dots span.active {
-  background: rgba(212, 168, 67, 0.95);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 95%, transparent);
 }
 
 .widget-clock {
@@ -1060,8 +1339,8 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  border: 1px solid rgba(212, 168, 67, 0.55);
-  background: rgba(212, 168, 67, 0.16);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 55.00000000000001%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
   flex-shrink: 0;
 }
 
@@ -1107,7 +1386,7 @@
 .widget-streak-track span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, rgba(212, 168, 67, 0.4), rgba(212, 168, 67, 0.88));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 40%, transparent), color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 88%, transparent));
 }
 
 .widget-streak-days {
@@ -1129,8 +1408,8 @@
 }
 
 .widget-streak-days span.on {
-  border-color: rgba(212, 168, 67, 0.6);
-  background: rgba(212, 168, 67, 0.18);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 60%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent);
   color: rgba(251, 236, 197, 0.98);
 }
 
@@ -1213,7 +1492,7 @@
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(212, 168, 67, 0.86);
+  color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 86%, transparent);
 }
 
 .widget-options-title {
@@ -1230,7 +1509,7 @@
 .widget-option-card {
   position: relative;
   border-radius: 24px;
-  border: 1px solid rgba(212, 168, 67, 0.18);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent);
   background: linear-gradient(170deg, rgba(251, 248, 240, 0.98), rgba(246, 241, 229, 0.98));
   color: rgba(52, 38, 16, 0.96);
   padding: 16px;
@@ -1245,7 +1524,7 @@
 
 .widget-option-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(212, 168, 67, 0.44);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 44%, transparent);
   box-shadow: 0 14px 28px rgba(42, 30, 12, 0.16);
 }
 
@@ -1263,8 +1542,8 @@
   width: 30px;
   height: 30px;
   border-radius: 999px;
-  border: 1px solid rgba(212, 168, 67, 0.32);
-  background: rgba(212, 168, 67, 0.16);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 32%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
   color: rgba(109, 74, 14, 0.95);
   display: inline-flex;
   align-items: center;
@@ -1286,8 +1565,8 @@
 }
 
 .widget-option-add-mark.added {
-  background: rgba(212, 168, 67, 0.18);
-  border-color: rgba(212, 168, 67, 0.52);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 52%, transparent);
   color: rgba(109, 74, 14, 0.98);
 }
 
@@ -1302,7 +1581,7 @@
   height: 86px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(212, 168, 67, 0.18);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent);
   background: linear-gradient(160deg, rgba(245, 239, 228, 0.94), rgba(236, 229, 216, 0.94));
   padding: 9px 11px;
 }
@@ -1316,7 +1595,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(255, 250, 241, 0.74);
-  border: 1px solid rgba(212, 168, 67, 0.14);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 14.000000000000002%, transparent);
 }
 
 .widget-mini-kicker,
@@ -1535,7 +1814,7 @@
   height: 14px;
   border-radius: 999px;
   border: 1px solid rgba(194, 175, 136, 0.86);
-  background: rgba(212, 168, 67, 0.2);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent);
 }
 
 .widget-mini-bookmarks {
@@ -1576,8 +1855,8 @@
 }
 
 .widget-option-card.added {
-  border-color: rgba(212, 168, 67, 0.58);
-  box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.18);
+  border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 57.99999999999999%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 18%, transparent);
 }
 
 .widget-option-card.added .widget-option-mini-wrap {
@@ -1607,9 +1886,9 @@
   text-transform: uppercase;
   border-radius: 999px;
   padding: 4px 10px;
-  border: 1px solid rgba(212, 168, 67, 0.54);
+  border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 54%, transparent);
   color: #ffe7b6;
-  background: rgba(212, 168, 67, 0.16);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 16%, transparent);
 }
 
 .widget-option-add.added {
@@ -1690,7 +1969,7 @@ body.is-canvas-interacting * {
 }
 
 .nt-customise-link {
-  color: var(--gold);
+  color: var(--theme-accent, #d4a843);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -1900,7 +2179,7 @@ body.is-canvas-interacting * {
   border-radius: 18px;
   overflow: hidden;
   background:
-    radial-gradient(120% 90% at 88% 86%, rgba(212, 168, 67, 0.2) 0%, rgba(212, 168, 67, 0) 52%),
+    radial-gradient(120% 90% at 88% 86%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent) 0%, color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 0%, transparent) 52%),
     linear-gradient(148deg, rgba(154, 184, 176, 0.9) 0%, rgba(178, 196, 188, 0.88) 52%, rgba(197, 202, 171, 0.88) 100%);
   border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px rgba(4, 16, 15, 0.2);
@@ -2344,4 +2623,335 @@ body.is-canvas-interacting * {
   margin-top: auto;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.24);
+}
+
+/* ── QIBLA COMPASS WIDGET ──────────────────────────────────────────────── */
+.qibla-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qibla-widget.small {
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qibla-compass-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.qibla-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle, rgba(255,255,255,0.04), rgba(0,0,0,0.2));
+  flex-shrink: 0;
+}
+
+.qibla-widget.large .qibla-ring {
+  width: 100px;
+  height: 100px;
+}
+
+.qibla-ring .n, .qibla-ring .e, .qibla-ring .s, .qibla-ring .w {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--t3);
+  letter-spacing: 0;
+}
+
+.qibla-ring .n { top: 3px; left: 50%; transform: translateX(-50%); color: var(--t1); }
+.qibla-ring .s { bottom: 3px; left: 50%; transform: translateX(-50%); }
+.qibla-ring .e { top: 50%; right: 4px; transform: translateY(-50%); }
+.qibla-ring .w { top: 50%; left: 4px; transform: translateY(-50%); }
+
+.qibla-bearing-line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 44%;
+  margin-left: -1px;
+  margin-top: -44%;
+  transform-origin: bottom center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qibla-pointer {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 16px solid var(--theme-accent, #d4a843);
+  border-top: none;
+}
+
+.qibla-needle-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qibla-needle {
+  width: 2px;
+  height: 16px;
+  background: var(--theme-accent, #d4a843);
+  border-radius: 999px;
+  transform-origin: bottom center;
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  margin-left: -1px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qibla-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--t1);
+}
+
+.qibla-bearing-big {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--theme-accent, #d4a843);
+  line-height: 1;
+}
+
+.qibla-cardinal {
+  font-size: 12px;
+  color: var(--t2);
+  margin-top: 4px;
+}
+
+.qibla-distance {
+  font-size: 11px;
+  color: var(--t3);
+  margin-top: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── RAMADAN COUNTDOWN WIDGET ──────────────────────────────────────────── */
+.ramadan-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ramadan-widget.small {
+  align-items: center;
+  justify-content: center;
+}
+
+.ramadan-val {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--theme-accent, #d4a843);
+}
+
+.ramadan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ramadan-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--theme-accent, #d4a843);
+}
+
+.ramadan-day-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t2);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.ramadan-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.ramadan-countdown-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.days-big {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--t1);
+  line-height: 1;
+}
+
+.days-label {
+  font-size: 12px;
+  color: var(--t2);
+  margin-top: 4px;
+}
+
+.ramadan-fasting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.fasting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 13px;
+  color: var(--t2);
+}
+
+.fasting-row .time {
+  font-weight: 600;
+  color: var(--t1);
+  font-size: 14px;
+}
+
+.ramadan-msg {
+  font-size: 14px;
+  color: var(--t2);
+}
+
+.ramadan-footer {
+  margin-top: 10px;
+}
+
+.ramadan-progress-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ramadan-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--theme-accent, #d4a843), color-mix(in srgb, var(--theme-accent, #d4a843) 60%, white));
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+/* ── NEXT PRAYER WIDGET ──────────────────────────────────────────────── */
+.np-widget {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.np-widget.small {
+  align-items: center;
+  text-align: center;
+}
+
+.np-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--theme-accent, #d4a843);
+  margin-bottom: 4px;
+}
+
+.np-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--t1);
+  line-height: 1;
+}
+
+.np-widget.small .np-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.np-countdown {
+  font-size: 14px;
+  color: var(--t2);
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.np-widget.small .np-countdown {
+  font-size: 12px;
+}
+
+.np-widget.large .np-countdown {
+  font-size: 18px;
+}
+
+.np-breakdown {
+  font-size: 11px;
+  color: var(--t3);
+  margin-top: 6px;
+}
+
+.np-bar-bg {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.np-bar-fill {
+  height: 100%;
+  background: var(--theme-accent, #d4a843);
+  border-radius: 999px;
+  transition: width 1s linear;
+}
+
+/* THEMING overrides for widget container */
+.nt-root[data-theme="solid"] .canvas-widget {
+  background: rgba(10, 10, 10, 0.98);
+  border-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: none;
+}
+.nt-root[data-theme="minimal"] .canvas-widget {
+  background: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.nt-root[data-theme="minimal"] .canvas-widget.edit-mode {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(11, 10, 8, 0.5);
+  backdrop-filter: blur(4px);
 }
