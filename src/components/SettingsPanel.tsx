@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { UserSettings, CalculationMethod, BackgroundSource, LayoutPreset } from '../types';
 import { BACKGROUNDS } from '../newtab/constants';
 import { RefreshCcw, Image as ImageIcon, Link as LinkIcon, Search, X, Palette, Paintbrush, UploadCloud, MessageCircle, Trash2, Plus, Download, Upload, ShieldCheck } from 'lucide-react';
@@ -202,7 +202,15 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
   };
 
   return (
-    <div className="bg-modal-layout" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="bg-modal-layout"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Background settings"
+      data-settings-dialog="true"
+      tabIndex={-1}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="bg-modal-sidebar">
         <div className="bg-modal-title">Select the image</div>
         <div className="bg-menu-list">
@@ -461,7 +469,15 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
   const title = tab === 'appearance' ? 'Appearance' : tab === 'about' ? 'About' : tab === 'feedback' ? 'Feedback' : 'General Settings';
 
   return (
-    <div className="settings-card modal-large" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="settings-card modal-large"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      data-settings-dialog="true"
+      tabIndex={-1}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="settings-header">
         <span className="settings-title">{title}</span>
         <button className="settings-close" onClick={onClose}><X size={20} /></button>
@@ -650,8 +666,72 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
 };
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ activeTab, settings, onSave, onClose }) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const previousFocusedRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    previousFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    const dialog = overlay.querySelector<HTMLElement>('[data-settings-dialog="true"]');
+    if (!dialog) return;
+
+    const focusables = dialog.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (focusables.length > 0) {
+      focusables[0].focus();
+    } else {
+      dialog.focus();
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const currentDialog = overlay.querySelector<HTMLElement>('[data-settings-dialog="true"]');
+      if (!currentDialog) return;
+
+      const currentFocusables = currentDialog.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (currentFocusables.length === 0) {
+        event.preventDefault();
+        currentDialog.focus();
+        return;
+      }
+
+      const first = currentFocusables[0];
+      const last = currentFocusables[currentFocusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      previousFocusedRef.current?.focus();
+    };
+  }, [onClose]);
+
   return (
-    <div className="settings-overlay" onClick={onClose}>
+    <div className="settings-overlay" onClick={onClose} ref={overlayRef}>
       {activeTab === 'background' ? (
         <BackgroundSettings settings={settings} onSave={onSave} onClose={onClose} />
       ) : (

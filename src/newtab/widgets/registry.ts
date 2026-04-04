@@ -1,4 +1,3 @@
-import type { WidgetId } from '../types';
 import type { WidgetComponentProps } from './types';
 
 import PrayerTimesWidget from './salah/PrayerTimesWidget';
@@ -20,6 +19,7 @@ import BookmarksWidget from './utility/BookmarksWidget';
 import NoteWidget from './utility/NoteWidget';
 
 import type React from 'react';
+import type { WidgetId } from '../../types';
 
 export const WIDGET_COMPONENTS: Record<WidgetId, React.FC<WidgetComponentProps>> = {
   'prayer-times': PrayerTimesWidget,

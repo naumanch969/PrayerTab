@@ -1,8 +1,8 @@
 import React from 'react';
 import './ramadan-countdown/styles.css';
-import { toHijri } from '../../lib/hijri';
-import { usePrayerTimes } from '../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
+import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
+import { toHijri } from '../../../lib/hijri';
 
 const RamadanCountdownWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {
   const h = toHijri(new Date());

@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './daily-ayah/styles.css';
 import { BookOpenText, Bookmark, Check, Share2 } from 'lucide-react';
-import { getDailyAyah } from '../../lib/quran';
-import { toHijri } from '../../lib/hijri';
 import type { WidgetComponentProps } from '../types';
+import { getDailyAyah } from '../../../lib/quran';
+import { toHijri } from '../../../lib/hijri';
 
 const DAILY_AYAH_BOOKMARKS_KEY = 'prayertab-daily-ayah-bookmarks';
 

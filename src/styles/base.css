@@ -11,6 +11,7 @@
   --t3:    #7a7670;
 
   --gold:       var(--theme-accent, #d4a843);
+  --gold-text:  #f3d89a;
   --gold-dim:   color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 15%, transparent);
   --gold-glow:  color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 30%, transparent);
 
@@ -21,6 +22,15 @@
   --radius:    16px;
   --radius-sm: 10px;
   --radius-xs: 6px;
+
+  --z-base: 1;
+  --z-canvas: 2;
+  --z-chrome: 10;
+  --z-sidebar: 30;
+  --z-dock: 40;
+  --z-toolbar: 45;
+  --z-widget-drag: 80;
+  --z-overlay: 200;
 }
 
 /* ── Reset ─────────────────────────────────────────────────────────────────── */
@@ -40,6 +50,11 @@ body {
 
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 input, textarea { font-family: inherit; }
+
+:where(button, [href], input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--gold-glow);
+  outline-offset: 2px;
+}
 
 /* Font Themes */
 .nt-root[data-font="inter"] {

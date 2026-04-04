@@ -1,6 +1,6 @@
 import React from 'react';
 import './clock/styles.css';
-import { useClock } from '../../hooks/useClock';
+import { useClock } from '../../../hooks/useClock';
 import type { WidgetComponentProps } from '../types';
 
 const ClockWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {

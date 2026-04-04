@@ -1,7 +1,7 @@
 import React from 'react';
-import type { UserSettings, WidgetId } from '../types';
 import type { WidgetRuntimeData } from './types';
 import { WIDGET_COMPONENTS } from './registry';
+import { UserSettings, WidgetId } from '../../types';
 
 interface WidgetRendererProps {
   widgetId: WidgetId;

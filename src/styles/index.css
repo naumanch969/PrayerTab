@@ -1,6 +1,7 @@
 @import './base.css';
 @import './layout.css';
 @import './core-widgets.css';
+@import './widget-shell.css';
 @import './widgets.css';
 @import './onboarding.css';
 @import './settings-panel.css';

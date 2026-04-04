@@ -1,6 +1,6 @@
 import React from 'react';
 import './qibla-compass/styles.css';
-import { calculateQibla, calculateDistanceToKaaba } from '../../lib/qibla';
+import { calculateQibla, calculateDistanceToKaaba } from '../../../lib/qibla';
 import type { WidgetComponentProps } from '../types';
 
 const QiblaCompassWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {

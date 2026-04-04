@@ -1,4 +1,4 @@
-import type { DailyPrayerLog, DhikrState, Intention, PrayerStatus, UserSettings } from '../types';
+import { DailyPrayerLog, DhikrState, Intention, PrayerStatus, UserSettings } from "../../types";
 
 export interface WidgetRuntimeData {
   todayLog: DailyPrayerLog | null;

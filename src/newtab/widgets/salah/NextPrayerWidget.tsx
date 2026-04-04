@@ -1,6 +1,6 @@
 import React from 'react';
 import './next-prayer/styles.css';
-import { usePrayerTimes } from '../../hooks/usePrayerTimes';
+import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 
 const NextPrayerWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {

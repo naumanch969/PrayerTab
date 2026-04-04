@@ -1,6 +1,6 @@
 import React from 'react';
 import './hijri-date/styles.css';
-import { toHijri } from '../../lib/hijri';
+import { toHijri } from '../../../lib/hijri';
 import type { WidgetComponentProps } from '../types';
 
 const HijriDateWidget: React.FC<WidgetComponentProps> = () => {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Settings2, Trash2 } from 'lucide-react';
 import type { UserSettings, WidgetId, WidgetLayout, WidgetDisplayMode } from '../../types';
-import type { WidgetRuntimeData } from '../../widgets/types';
+import type { WidgetRuntimeData } from '../widgets/types';
 import { getSizeTier } from '../utils';
 import { WIDGET_LOOKUP } from '../constants';
-import { WidgetRenderer } from '../../widgets/WidgetRenderer';
+import { WidgetRenderer } from '../widgets/WidgetRenderer';
 
 interface WidgetCardProps {
     widgetId: WidgetId;
@@ -21,21 +21,36 @@ interface WidgetCardProps {
     settings: UserSettings;
     runtime: WidgetRuntimeData;
     index: number;
+    interactionKind: 'drag' | 'resize' | null;
 }
 
-export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, onEnterEditMode, settings, runtime, index }) => {
+export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, onEnterEditMode, settings, runtime, index, interactionKind }) => {
     const widget = WIDGET_LOOKUP[widgetId];
     const longPressTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pointerDownRef = React.useRef<{ x: number; y: number } | null>(null);
 
     if (!widget) return null; // Safe guard against corrupt memory or unknown widgets
 
     const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
-        if (!isEditMode) {
+        if (!isEditMode && event.pointerType === 'touch') {
+            pointerDownRef.current = { x: event.clientX, y: event.clientY };
             longPressTimer.current = setTimeout(() => {
                 onEnterEditMode();
-            }, 600);
+            }, 450);
         }
         onDragStart(widgetId, index, event);
+    };
+
+    const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+        if (!longPressTimer.current || !pointerDownRef.current) return;
+
+        const dx = Math.abs(event.clientX - pointerDownRef.current.x);
+        const dy = Math.abs(event.clientY - pointerDownRef.current.y);
+
+        if (dx > 8 || dy > 8) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
     };
 
     const handlePointerUp = () => {
@@ -43,17 +58,29 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
             clearTimeout(longPressTimer.current);
             longPressTimer.current = null;
         }
+        pointerDownRef.current = null;
     };
+
+    React.useEffect(() => {
+        return () => {
+            if (longPressTimer.current) {
+                clearTimeout(longPressTimer.current);
+                longPressTimer.current = null;
+            }
+        };
+    }, []);
 
     const sizeTier = getSizeTier(layout, displayMode);
 
     return (
         <article
-            className={`canvas-widget ${isEditMode ? 'edit-mode' : ''} ${sizeTier}`}
+            className={`canvas-widget ${isEditMode ? 'edit-mode' : ''} ${sizeTier} ${interactionKind === 'drag' ? 'is-dragging' : ''} ${interactionKind === 'resize' ? 'is-resizing' : ''}`}
             style={{ left: layout.x, top: layout.y, width: layout.w, height: layout.h }}
             onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerUp}
+            onPointerCancel={handlePointerUp}
         >
             <WidgetRenderer
                 widgetId={widgetId}

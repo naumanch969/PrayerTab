@@ -4,10 +4,9 @@ import { useStorage } from '../hooks/useStorage';
 import Onboarding from '../components/Onboarding';
 import SettingsPanel from '../components/SettingsPanel';
 import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout, LayoutPreset, InnerWidgetPreference } from '../types';
-import type { WidgetRuntimeData } from '../widgets/types';
+import type { WidgetRuntimeData } from './widgets/types';
 
-import { NAV_WIDGETS, WIDGET_LOOKUP } from './constants';
-import { SYSTEM_PRESETS } from './presets';
+import { NAV_WIDGETS } from './constants';
 import { clampLayoutToViewport, defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
 import type { WidgetNavId } from './types';
 
@@ -87,7 +86,7 @@ const NewTab: React.FC = () => {
         void storage.updateSettings(nextSettings);
     };
 
-    const { layoutDraft, setLayoutDraft, startInteraction } = useWidgetInteraction(
+    const { layoutDraft, setLayoutDraft, startInteraction, activeInteraction } = useWidgetInteraction(
         isEditMode,
         storage.settings?.widgetLayouts ?? {},
         (layouts) => {
@@ -267,7 +266,9 @@ const NewTab: React.FC = () => {
     }, [layoutDraft]);
 
     useEffect(() => {
-        const onResize = () => {
+        let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+        const normalizeToViewport = () => {
             if (!settingsRef.current) return;
 
             const currentLayouts = layoutDraftRef.current;
@@ -292,8 +293,20 @@ const NewTab: React.FC = () => {
             persistSettings({ widgetLayouts: nextLayouts as Record<WidgetId, WidgetLayout> });
         };
 
+        const onResize = () => {
+            if (resizeDebounceTimer) {
+                clearTimeout(resizeDebounceTimer);
+            }
+            resizeDebounceTimer = setTimeout(normalizeToViewport, 150);
+        };
+
         window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
+        return () => {
+            window.removeEventListener('resize', onResize);
+            if (resizeDebounceTimer) {
+                clearTimeout(resizeDebounceTimer);
+            }
+        };
     }, []);
 
     const markCustomizePromptSeen = () => {
@@ -433,6 +446,7 @@ const NewTab: React.FC = () => {
                         onEnterEditMode={enterEditMode}
                         settings={settings}
                         runtime={widgetRuntime}
+                        interactionKind={activeInteraction?.widgetId === widgetId ? activeInteraction.kind : null}
                     />
                 ))}
             </div>

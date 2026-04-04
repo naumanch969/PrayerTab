@@ -4,12 +4,9 @@ import type { InteractionState } from '../types';
 import { clamp, snapToGrid } from '../utils';
 import { MAX_WIDGET_H, MAX_WIDGET_W, MIN_WIDGET_H, MIN_WIDGET_W, WIDGET_SIZE_CONSTRAINTS } from '../constants';
 
-export function useWidgetInteraction(
-    isEditMode: boolean,
-    initialLayouts: Partial<Record<WidgetId, WidgetLayout>>,
-    onSaveLayouts: (layouts: Partial<Record<WidgetId, WidgetLayout>>) => void
-) {
+export function useWidgetInteraction(isEditMode: boolean, initialLayouts: Partial<Record<WidgetId, WidgetLayout>>, onSaveLayouts: (layouts: Partial<Record<WidgetId, WidgetLayout>>) => void) {
     const [layoutDraft, setLayoutDraft] = useState<Partial<Record<WidgetId, WidgetLayout>>>(initialLayouts);
+    const [activeInteraction, setActiveInteraction] = useState<{ widgetId: WidgetId; kind: 'drag' | 'resize' } | null>(null);
     const interactionRef = useRef<InteractionState | null>(null);
     const layoutDraftRef = useRef(layoutDraft);
 
@@ -48,6 +45,7 @@ export function useWidgetInteraction(
             startY: event.clientY,
             baseLayout,
         };
+        setActiveInteraction({ widgetId, kind });
     }, [isEditMode]);
 
     useEffect(() => {
@@ -126,8 +124,9 @@ export function useWidgetInteraction(
             if (event.pointerId !== interaction.pointerId) return;
 
             interactionRef.current = null;
+            setActiveInteraction(null);
             document.body.classList.remove('is-canvas-interacting');
-            
+
             // Note: We avoid auto-saving every minor drop if it causes too many rewrites.
             // For now, mirroring previous logic to persist.
             onSaveLayouts(layoutDraftRef.current);
@@ -142,6 +141,7 @@ export function useWidgetInteraction(
             window.removeEventListener('pointerup', finishInteraction);
             window.removeEventListener('pointercancel', finishInteraction);
             document.body.classList.remove('is-canvas-interacting');
+            setActiveInteraction(null);
         };
     }, [isEditMode, onSaveLayouts]);
 
@@ -149,5 +149,6 @@ export function useWidgetInteraction(
         layoutDraft,
         setLayoutDraft,
         startInteraction,
+        activeInteraction,
     };
 }

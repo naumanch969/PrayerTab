@@ -1,6 +1,6 @@
 import React from 'react';
 import './prayer-times/styles.css';
-import { usePrayerTimes } from '../../hooks/usePrayerTimes';
+import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 
 const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {

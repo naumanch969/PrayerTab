@@ -24,6 +24,22 @@
   text-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
 }
 
+.widget-body-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin: auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 10%, rgba(8, 7, 5, 0.64));
+  color: rgba(247, 242, 231, 0.92);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────── */
 /* CENTER COUNTDOWN BANNER                                                      */
 /* ─────────────────────────────────────────────────────────────────────────── */

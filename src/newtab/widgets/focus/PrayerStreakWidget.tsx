@@ -23,7 +23,7 @@ const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMod
           <span className="streak-number">{streak}</span>
           <span className="streak-days-label">Day Streak</span>
         </div>
-        
+
         {sizeTier === 'large' && (
           <div className="streak-today-stat">
             {completedToday}/5 Prayers Today
@@ -32,15 +32,15 @@ const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMod
       </div>
 
       <div className="streak-interactive-grid" onPointerDown={(e) => e.stopPropagation()}>
-        {PRAYERS.map((prayer) => {
+        {PRAYERS.map((prayer, index) => {
           const status = runtime.todayLog?.[prayer.key] ?? 'pending';
           const isCompleted = status === 'completed';
 
           return (
             <button
-              key={prayer.key}
+              key={index}
               className={`streak-dot ${isCompleted ? 'completed' : ''}`}
-              title={`${prayer.key}: ${status}`}
+              title={`${String(prayer.key)}: ${status}`}
               onClick={() => {
                 if (isEditMode) return;
                 void runtime.togglePrayer(prayer.key, status);
