@@ -38,7 +38,46 @@ const DEFAULT_DHIKR: DhikrState = {
   current: 'Subhanallah',
   counts: { Subhanallah: 0, Alhamdulillah: 0, AllahuAkbar: 0 },
   date: todayIso(),
+  streak: 0,
+  lastActiveDate: null,
+  todayTotal: 0,
 };
+
+const dayMs = 24 * 60 * 60 * 1000;
+
+function dateKeyFrom(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function parseDateKey(dateKey: string | null): Date | null {
+  if (!dateKey) return null;
+  const parsed = new Date(`${dateKey}T00:00:00.000Z`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isYesterday(previous: string | null, current: string): boolean {
+  const prevDate = parseDateKey(previous);
+  const currentDate = parseDateKey(current);
+  if (!prevDate || !currentDate) return false;
+  return currentDate.getTime() - prevDate.getTime() === dayMs;
+}
+
+function normalizeDhikrState(stored: DhikrState | undefined): DhikrState {
+  if (!stored) return { ...DEFAULT_DHIKR };
+
+  return {
+    current: stored.current ?? DEFAULT_DHIKR.current,
+    counts: {
+      Subhanallah: stored.counts?.Subhanallah ?? 0,
+      Alhamdulillah: stored.counts?.Alhamdulillah ?? 0,
+      AllahuAkbar: stored.counts?.AllahuAkbar ?? 0,
+    },
+    date: stored.date ?? todayIso(),
+    streak: Math.max(0, stored.streak ?? 0),
+    lastActiveDate: stored.lastActiveDate ?? null,
+    todayTotal: Math.max(0, stored.todayTotal ?? 0),
+  };
+}
 
 const DEFAULT_SETTINGS: UserSettings = {
   name: '',
@@ -136,8 +175,18 @@ export function calculateStreak(logs: DailyPrayerLog[]): number {
 
 export async function getDhikr(): Promise<DhikrState> {
   const stored = await readRaw('dhikr') as DhikrState | undefined;
-  if (!stored || stored.date !== todayIso()) return DEFAULT_DHIKR;
-  return stored;
+  const normalized = normalizeDhikrState(stored);
+  const today = todayIso();
+
+  if (normalized.date === today) return normalized;
+
+  return {
+    ...normalized,
+    current: 'Subhanallah',
+    counts: { Subhanallah: 0, Alhamdulillah: 0, AllahuAkbar: 0 },
+    date: today,
+    todayTotal: 0,
+  };
 }
 
 export async function saveDhikr(state: DhikrState): Promise<void> {
@@ -147,10 +196,25 @@ export async function saveDhikr(state: DhikrState): Promise<void> {
 export function incrementDhikr(state: DhikrState): DhikrState {
   const MAX_COUNT = 33;
   const SEQUENCE: DhikrType[] = ['Subhanallah', 'Alhamdulillah', 'AllahuAkbar'];
-  const newCount = state.counts[state.current] + 1;
+  const today = todayIso();
+  const normalized = normalizeDhikrState(state);
+
+  const nextStreak = normalized.lastActiveDate === today
+    ? normalized.streak
+    : isYesterday(normalized.lastActiveDate, today)
+      ? normalized.streak + 1
+      : 1;
+
+  const nextMeta = {
+    streak: nextStreak,
+    lastActiveDate: today,
+    todayTotal: (normalized.date === today ? normalized.todayTotal : 0) + 1,
+  };
+
+  const newCount = normalized.counts[normalized.current] + 1;
 
   if (newCount >= MAX_COUNT) {
-    const currentIdx = SEQUENCE.indexOf(state.current);
+    const currentIdx = SEQUENCE.indexOf(normalized.current);
     const nextIdx = (currentIdx + 1) % SEQUENCE.length;
     const nextType = SEQUENCE[nextIdx];
     // If we've looped all 3, reset all counts
@@ -159,16 +223,28 @@ export function incrementDhikr(state: DhikrState): DhikrState {
       current: allCompleted ? 'Subhanallah' : nextType,
       counts: allCompleted
         ? { Subhanallah: 0, Alhamdulillah: 0, AllahuAkbar: 0 }
-        : { ...state.counts, [state.current]: MAX_COUNT },
-      date: state.date,
+        : { ...normalized.counts, [normalized.current]: MAX_COUNT },
+      date: today,
+      ...nextMeta,
     };
   }
 
-  return { ...state, counts: { ...state.counts, [state.current]: newCount } };
+  return {
+    ...normalized,
+    counts: { ...normalized.counts, [normalized.current]: newCount },
+    date: today,
+    ...nextMeta,
+  };
 }
 
 export async function resetDhikr(): Promise<DhikrState> {
-  const resetState = { ...DEFAULT_DHIKR, date: todayIso() };
+  const current = await getDhikr();
+  const resetState: DhikrState = {
+    ...DEFAULT_DHIKR,
+    date: todayIso(),
+    streak: current.streak,
+    lastActiveDate: current.lastActiveDate,
+  };
   await saveDhikr(resetState);
   return resetState;
 }

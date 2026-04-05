@@ -129,6 +129,9 @@ export interface DhikrState {
   current: DhikrType;
   counts: Record<DhikrType, number>;
   date: string;
+  streak: number;
+  lastActiveDate: string | null;
+  todayTotal: number;
 }
 
 // ── Intention ────────────────────────────────────────────────────────────────

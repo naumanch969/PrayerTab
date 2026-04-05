@@ -8,6 +8,8 @@ const formatDhikrLabel = (value: string) => (value === 'AllahuAkbar' ? 'Allahu A
 const DhikrCounterWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, sizeTier }) => {
   const current = runtime.dhikr?.current ?? 'Subhanallah';
   const count = runtime.dhikr?.counts[current] ?? 0;
+  const streak = runtime.dhikr?.streak ?? 0;
+  const todayTotal = runtime.dhikr?.todayTotal ?? 0;
   const cycleMax = 33;
   const pct = Math.min(((count % cycleMax) / cycleMax) * 100, 100);
 
@@ -19,6 +21,18 @@ const DhikrCounterWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtim
 
   return (
     <div className={`dhikr-widget ${sizeTier}`}>
+      <div className="dhikr-meta" aria-hidden="true">
+        <span className="dhikr-streak-chip">{streak}d streak</span>
+        <div className="dhikr-meta-actions">
+          <span className="dhikr-total-chip">today {todayTotal}</span>
+          {sizeTier !== 'small' && (
+            <button type="button" className="dhikr-reset-btn" onClick={handleReset} disabled={isEditMode}>
+              <RotateCcw size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
       <button
         type="button"
         className="dhikr-tap-area"
@@ -34,11 +48,6 @@ const DhikrCounterWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtim
         </div>
       </button>
       
-      {sizeTier !== 'small' && (
-        <button className="dhikr-reset-btn" onClick={handleReset} disabled={isEditMode}>
-          <RotateCcw size={14} />
-        </button>
-      )}
     </div>
   );
 };

@@ -7,6 +7,8 @@ const phrases = ['Subhanallah', 'Alhamdulillah', 'Allahu Akbar'] as const;
 
 const TasbeehWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, sizeTier }) => {
   const current = runtime.dhikr?.current ?? 'Subhanallah';
+  const streak = runtime.dhikr?.streak ?? 0;
+  const todayTotal = runtime.dhikr?.todayTotal ?? 0;
   const counts = [
     runtime.dhikr?.counts.Subhanallah ?? 0,
     runtime.dhikr?.counts.Alhamdulillah ?? 0,
@@ -20,6 +22,27 @@ const TasbeehWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, si
 
   return (
     <div className={`tasbeeh-widget ${sizeTier}`}>
+      <div className="tasbeeh-meta" aria-hidden="true">
+        <span className="tasbeeh-streak-chip">{streak}d streak</span>
+        <div className="tasbeeh-meta-actions">
+          <span className="tasbeeh-total-chip">today {todayTotal}</span>
+          {sizeTier !== 'small' && (
+            <button
+              type="button"
+              className="dhikr-reset-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isEditMode) return;
+                void runtime.resetDhikr();
+              }}
+              disabled={isEditMode}
+            >
+              <RotateCcw size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
       <button type="button" className="tasbeeh-tap-area" onClick={onTap}>
         {sizeTier === 'small' ? (
           <div className="tasbeeh-compact-view">
@@ -45,20 +68,6 @@ const TasbeehWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, si
           </div>
         )}
       </button>
-
-      {sizeTier !== 'small' && (
-        <button
-          className="dhikr-reset-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (isEditMode) return;
-            void runtime.resetDhikr();
-          }}
-          disabled={isEditMode}
-        >
-          <RotateCcw size={14} />
-        </button>
-      )}
     </div>
   );
 };

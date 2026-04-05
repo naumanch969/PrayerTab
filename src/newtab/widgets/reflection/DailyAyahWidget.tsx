@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './daily-ayah/styles.css';
-import { BookOpenText, Bookmark, Check, Share2 } from 'lucide-react';
+import { BookOpenText, Bookmark, Check, RefreshCcw, Share2 } from 'lucide-react';
 import type { WidgetComponentProps } from '../types';
-import { getDailyAyah } from '../../../lib/quran';
+import { getDailyAyahWithOffset } from '../../../lib/quran';
 import { toHijri } from '../../../lib/hijri';
 
 const DAILY_AYAH_BOOKMARKS_KEY = 'prayertab-daily-ayah-bookmarks';
@@ -29,7 +29,8 @@ const SURAH_NUMBER: Record<string, number> = {
 
 const DailyAyahWidget: React.FC<WidgetComponentProps> = ({ sizeTier, isEditMode }) => {
   const h = toHijri(new Date());
-  const ayah = getDailyAyah(h.day);
+  const [ayahOffset, setAyahOffset] = useState(0);
+  const ayah = useMemo(() => getDailyAyahWithOffset(h.day, ayahOffset), [h.day, ayahOffset]);
   const surahNumber = SURAH_NUMBER[ayah.surah] ?? null;
   const ayahId = `${ayah.surah}:${ayah.ayahNumber}`;
 
@@ -92,6 +93,12 @@ const DailyAyahWidget: React.FC<WidgetComponentProps> = ({ sizeTier, isEditMode 
     window.open(`https://quran.com/${surahNumber}:${ayah.ayahNumber}/tafsirs/en-tafisr-ibn-kathir`, '_blank', 'noopener,noreferrer');
   };
 
+  const onRefreshAyah = () => {
+    if (isEditMode) return;
+    setAyahOffset((current) => current + 1);
+    setShareDone(false);
+  };
+
   return (
     <div className={`ayah-widget ${sizeTier}`}>
       <div className="ayah-fog" />
@@ -114,14 +121,38 @@ const DailyAyahWidget: React.FC<WidgetComponentProps> = ({ sizeTier, isEditMode 
         </div>
 
         <div className="ayah-controls">
-          <button className="ayah-btn" onClick={onShare}>
+          <button type="button" className="ayah-btn" onClick={onShare} disabled={isEditMode} aria-label="Share ayah" title="Share ayah">
             {shareDone ? <Check size={14} /> : <Share2 size={14} />}
           </button>
-          <button className={`ayah-btn ${bookmarked ? 'active' : ''}`} onClick={toggleBookmark}>
+          <button
+            type="button"
+            className="ayah-btn"
+            onClick={onRefreshAyah}
+            disabled={isEditMode}
+            aria-label="Refresh ayah"
+            title="Refresh ayah"
+          >
+            <RefreshCcw size={14} />
+          </button>
+          <button
+            type="button"
+            className={`ayah-btn ${bookmarked ? 'active' : ''}`}
+            onClick={toggleBookmark}
+            disabled={isEditMode}
+            aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark ayah'}
+            title={bookmarked ? 'Remove bookmark' : 'Bookmark ayah'}
+          >
             <Bookmark size={14} fill={bookmarked ? 'currentColor' : 'none'} />
           </button>
           {sizeTier !== 'small' && (
-            <button className="ayah-tafsir-btn" onClick={openTafsir}>
+            <button
+              type="button"
+              className="ayah-tafsir-btn"
+              onClick={openTafsir}
+              disabled={isEditMode || !surahNumber}
+              aria-label="Open tafsir"
+              title="Open tafsir"
+            >
               <BookOpenText size={14} />
               {sizeTier === 'large' && <span>Tafsir</span>}
             </button>

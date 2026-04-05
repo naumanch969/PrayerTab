@@ -166,3 +166,9 @@ export function getDailyAyah(hijriDay: number): Ayah {
   const index = (hijriDay - 1) % AYAHS.length;
   return AYAHS[index];
 }
+
+export function getDailyAyahWithOffset(hijriDay: number, offset: number): Ayah {
+  const normalizedOffset = ((offset % AYAHS.length) + AYAHS.length) % AYAHS.length;
+  const index = (hijriDay - 1 + normalizedOffset) % AYAHS.length;
+  return AYAHS[index];
+}

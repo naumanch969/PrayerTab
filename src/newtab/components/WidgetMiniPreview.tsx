@@ -193,9 +193,14 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
                 <div className="widget-mini widget-mini-quote">
                     <div className="widget-mini-ayah-head">
                         <Quote size={14} strokeWidth={2} />
-                        <span className="widget-mini-ayah-word">Ayah</span>
+                        <span className="widget-mini-ayah-word">Daily Ayah</span>
                     </div>
-                    <div className="widget-mini-quote-lines"><span /><span /><span /></div>
+                    <div className="widget-mini-quote-arabic-lines"><span /><span /></div>
+                    <div className="widget-mini-quote-lines"><span /><span /></div>
+                    <div className="widget-mini-ayah-foot">
+                        <span>Al-Fatihah</span>
+                        <span>1:2</span>
+                    </div>
                 </div>
             );
         case 'focus-task':
@@ -225,7 +230,9 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'dhikr-counter':
             return (
                 <div className="widget-mini widget-mini-counter">
+                    <span className="widget-mini-counter-label">Subhanallah</span>
                     <div className="widget-mini-counter-ring">18</div>
+                    <div className="widget-mini-counter-track"><span /></div>
                 </div>
             );
         case 'prayer-streak':
@@ -259,7 +266,21 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'tasbeeh':
             return (
                 <div className="widget-mini widget-mini-tasbeeh">
-                    <div className="widget-mini-beads"><span /><span /><span /></div>
+                    <div className="widget-mini-tasbeeh-row active">
+                        <span>Subhanallah</span>
+                        <span>11</span>
+                        <i />
+                    </div>
+                    <div className="widget-mini-tasbeeh-row">
+                        <span>Alhamdulillah</span>
+                        <span>7</span>
+                        <i />
+                    </div>
+                    <div className="widget-mini-tasbeeh-row">
+                        <span>Allahu Akbar</span>
+                        <span>2</span>
+                        <i />
+                    </div>
                 </div>
             );
         case 'bookmarks':
