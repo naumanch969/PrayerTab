@@ -175,10 +175,17 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'clock':
             return (
                 <div className="widget-mini widget-mini-clock">
-                    <div className="widget-mini-clock-face">
-                        <span className="widget-mini-hand short" />
-                        <span className="widget-mini-hand long" />
+                    <div className="widget-mini-clock-head">
+                        <span className="widget-mini-clock-kicker">Now</span>
+                        <span className="widget-mini-clock-pill">24h</span>
                     </div>
+
+                    <div className="widget-mini-clock-main">
+                        <span className="widget-mini-clock-time">08:45</span>
+                        <span className="widget-mini-clock-date">Thu · 21 Sha</span>
+                    </div>
+
+                    <span className="widget-mini-clock-meta">Local time</span>
                 </div>
             );
         case 'daily-ayah':
@@ -194,8 +201,25 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'focus-task':
             return (
                 <div className="widget-mini widget-mini-task">
-                    <div className="widget-mini-task-row"><CheckSquare size={14} strokeWidth={2} /><span className="widget-mini-task-line" /></div>
-                    <div className="widget-mini-task-row"><CheckSquare size={14} strokeWidth={2} /><span className="widget-mini-task-line" /></div>
+                    <div className="widget-mini-task-head">
+                        <span className="widget-mini-task-kicker">Focus</span>
+                        <span className="widget-mini-task-state">Running</span>
+                    </div>
+
+                    <div className="widget-mini-task-input-row">
+                        <CheckSquare size={12} strokeWidth={2.1} />
+                        <span className="widget-mini-task-line" />
+                    </div>
+
+                    <div className="widget-mini-task-progress"><span /></div>
+
+                    <div className="widget-mini-task-timer-row">
+                        <span className="widget-mini-task-timer">21:08</span>
+                        <div className="widget-mini-task-controls">
+                            <span />
+                            <span />
+                        </div>
+                    </div>
                 </div>
             );
         case 'dhikr-counter':
@@ -207,8 +231,20 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'prayer-streak':
             return (
                 <div className="widget-mini widget-mini-streak">
+                    <div className="widget-mini-streak-head">
+                        <div className="widget-mini-streak-value-wrap">
+                            <span className="widget-mini-streak-number">5</span>
+                            <span className="widget-mini-streak-label">days</span>
+                        </div>
+                        <span className="widget-mini-streak-pill">3/5 done</span>
+                    </div>
+
                     <div className="widget-mini-streak-dots">
-                        <span /><span /><span /><span /><span className="active" /><span className="active" /><span className="active" />
+                        <span className="active">F</span>
+                        <span className="active">D</span>
+                        <span className="active">A</span>
+                        <span>M</span>
+                        <span>I</span>
                     </div>
                 </div>
             );

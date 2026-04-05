@@ -18,27 +18,23 @@ const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMod
 
   return (
     <div className={`streak-widget ${sizeTier}`}>
-      <div className="streak-main">
+      <div className="streak-head">
         <div className="streak-value-wrap">
           <span className="streak-number">{streak}</span>
-          <span className="streak-days-label">Day Streak</span>
+          <span className="streak-days-label">Day streak</span>
         </div>
 
-        {sizeTier === 'large' && (
-          <div className="streak-today-stat">
-            {completedToday}/5 Prayers Today
-          </div>
-        )}
+        <div className="streak-today-stat">{completedToday}/5 Today</div>
       </div>
 
       <div className="streak-interactive-grid" onPointerDown={(e) => e.stopPropagation()}>
-        {PRAYERS.map((prayer, index) => {
+        {PRAYERS.map((prayer) => {
           const status = runtime.todayLog?.[prayer.key] ?? 'pending';
           const isCompleted = status === 'completed';
 
           return (
             <button
-              key={index}
+              key={prayer.key}
               className={`streak-dot ${isCompleted ? 'completed' : ''}`}
               title={`${String(prayer.key)}: ${status}`}
               onClick={() => {
@@ -46,7 +42,7 @@ const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMod
                 void runtime.togglePrayer(prayer.key, status);
               }}
             >
-              {sizeTier !== 'small' && <span className="streak-dot-label">{prayer.label}</span>}
+              <span className="streak-dot-label">{prayer.label}</span>
               <div className="streak-dot-indicator">
                 {isCompleted && <span className="streak-check">✓</span>}
               </div>
@@ -54,6 +50,8 @@ const PrayerStreakWidget: React.FC<WidgetComponentProps> = ({ runtime, isEditMod
           );
         })}
       </div>
+
+      {sizeTier === 'large' && <div className="streak-foot">Tap prayers to mark completion.</div>}
     </div>
   );
 };

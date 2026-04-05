@@ -1,14 +1,173 @@
-.sample-widget.sample-streak {
+.streak-widget {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
 	border-radius: 16px;
-	padding: 11px;
-	background: linear-gradient(160deg, rgba(246, 237, 215, 0.95), rgba(241, 229, 197, 0.9));
-	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 26%, transparent);
-	color: rgba(79, 56, 15, 0.94);
+	background:
+		linear-gradient(170deg, rgba(9, 8, 7, 0.84), rgba(8, 8, 8, 0.78)),
+		radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--theme-accent, #d4a843) 16%, transparent), transparent 44%);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, #d4a843) 32%, transparent);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.sample-streak .sample-widget-label { color: rgba(123, 91, 30, 0.66); }
-.sample-streak .sample-streak-head { display: flex; align-items: baseline; gap: 8px; }
-.sample-streak .sample-streak-value { font-size: clamp(30px, 4.1vw, 48px); font-weight: 700; color: rgba(104, 72, 11, 0.98); line-height: 1; }
-.sample-streak .sample-widget-sub { color: rgba(117, 88, 38, 0.72); }
-.sample-streak .sample-streak-days span { border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 22%, transparent); background: rgba(255, 249, 234, 0.66); }
-.sample-streak .sample-streak-days span.on { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 20%, transparent); border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 56.00000000000001%, transparent); }
+.streak-widget::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+}
+
+.streak-widget > * {
+	position: relative;
+	z-index: 1;
+}
+
+.streak-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.streak-value-wrap {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.streak-number {
+	font-size: clamp(32px, 5vw, 56px);
+	line-height: 0.95;
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	color: color-mix(in srgb, var(--theme-accent, #d4a843) 30%, #ffffff);
+	text-shadow: 0 0 14px color-mix(in srgb, var(--theme-accent, #d4a843) 20%, transparent);
+}
+
+.streak-days-label {
+	font-size: 11px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(221, 213, 197, 0.78);
+}
+
+.streak-today-stat {
+	font-size: 10px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: color-mix(in srgb, var(--theme-accent, #d4a843) 76%, var(--t1));
+	border: 1px solid color-mix(in srgb, var(--theme-accent, #d4a843) 34%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 12%, rgba(255, 255, 255, 0.03));
+	border-radius: 999px;
+	padding: 4px 9px;
+	white-space: nowrap;
+}
+
+.streak-interactive-grid {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 7px;
+	min-height: 0;
+}
+
+.streak-dot {
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	background: rgba(255, 255, 255, 0.06);
+	padding: 8px 6px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	color: rgba(229, 220, 204, 0.88);
+	transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.streak-dot:hover {
+	transform: translateY(-1px);
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 52%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 14%, rgba(255, 255, 255, 0.03));
+}
+
+.streak-dot-label {
+	font-size: 10px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1;
+}
+
+.streak-dot-indicator {
+	width: 16px;
+	height: 16px;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.24);
+	background: rgba(255, 255, 255, 0.05);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.streak-check {
+	font-size: 10px;
+	line-height: 1;
+	font-weight: 700;
+}
+
+.streak-dot.completed {
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 62%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 20%, rgba(255, 255, 255, 0.03));
+	color: rgba(255, 247, 228, 0.95);
+}
+
+.streak-dot.completed .streak-dot-indicator {
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 70%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 46%, transparent);
+	color: #fff3d1;
+}
+
+.streak-foot {
+	font-size: 9px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: rgba(203, 196, 181, 0.58);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.streak-widget.small {
+	padding: 10px;
+	gap: 8px;
+}
+
+.streak-widget.small .streak-head {
+	gap: 8px;
+}
+
+.streak-widget.small .streak-number {
+	font-size: 28px;
+}
+
+.streak-widget.small .streak-days-label,
+.streak-widget.small .streak-today-stat {
+	font-size: 9px;
+}
+
+.streak-widget.small .streak-dot {
+	padding: 6px 4px;
+	gap: 4px;
+	border-radius: 10px;
+}
+
+.streak-widget.small .streak-dot-indicator {
+	width: 14px;
+	height: 14px;
+}

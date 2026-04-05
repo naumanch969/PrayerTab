@@ -4,9 +4,11 @@ import type { WidgetComponentProps } from '../types';
 
 import { Play, Pause, RotateCcw } from 'lucide-react';
 
+const POMODORO_SECONDS = 25 * 60;
+
 const FocusTaskWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, sizeTier }) => {
   const [task, setTask] = useState(runtime.intention?.text ?? '');
-  const [timerSeconds, setTimerSeconds] = useState(25 * 60);
+  const [timerSeconds, setTimerSeconds] = useState(POMODORO_SECONDS);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
@@ -36,12 +38,17 @@ const FocusTaskWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, 
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const progress = ((POMODORO_SECONDS - timerSeconds) / POMODORO_SECONDS) * 100;
+
   return (
     <div className={`focus-task-widget ${sizeTier}`}>
+      <div className="focus-task-head">
+        <span className="focus-task-kicker">Focus</span>
+        <span className={`focus-task-status ${isActive ? 'running' : ''}`}>{isActive ? 'Running' : 'Ready'}</span>
+      </div>
+
       <div className="focus-task-content" onPointerDown={(e) => e.stopPropagation()}>
-        {sizeTier !== 'small' && (
-          <div className="focus-task-label">Intention</div>
-        )}
+        {sizeTier !== 'small' && <div className="focus-task-label">Intention</div>}
         
         <input
           className="focus-task-input"
@@ -58,14 +65,20 @@ const FocusTaskWidget: React.FC<WidgetComponentProps> = ({ isEditMode, runtime, 
           placeholder="What is your focus today?"
         />
 
-        {sizeTier === 'large' && (
+        {sizeTier !== 'small' && (
+          <div className="focus-timer-progress" aria-hidden="true">
+            <span style={{ width: `${Math.max(0, Math.min(100, progress))}%` }} />
+          </div>
+        )}
+
+        {sizeTier !== 'small' && (
           <div className="focus-timer-section">
             <div className="focus-timer-display">{formatTime(timerSeconds)}</div>
             <div className="focus-timer-controls">
-              <button onClick={() => setIsActive(!isActive)} className="timer-btn">
+              <button onClick={() => setIsActive(!isActive)} className="timer-btn" aria-label={isActive ? 'Pause timer' : 'Start timer'}>
                 {isActive ? <Pause size={16} /> : <Play size={16} />}
               </button>
-              <button onClick={() => { setIsActive(false); setTimerSeconds(25 * 60); }} className="timer-btn">
+              <button onClick={() => { setIsActive(false); setTimerSeconds(POMODORO_SECONDS); }} className="timer-btn" aria-label="Reset timer">
                 <RotateCcw size={16} />
               </button>
             </div>

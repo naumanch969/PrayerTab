@@ -1,15 +1,179 @@
-.sample-widget.sample-focus-task {
+.focus-task-widget {
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
 	border-radius: 16px;
-	padding: 11px;
-	background: rgba(251, 246, 234, 0.38);
-	backdrop-filter: blur(8px);
-	border: 1px solid color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 26%, transparent);
-	color: rgba(70, 52, 21, 0.94);
-	box-shadow: 0 10px 24px rgba(53, 37, 12, 0.1);
+	background:
+		linear-gradient(170deg, rgba(9, 8, 7, 0.84), rgba(8, 8, 8, 0.78)),
+		radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--theme-accent, #d4a843) 18%, transparent), transparent 42%);
+	border: 1px solid color-mix(in srgb, var(--theme-accent, #d4a843) 32%, transparent);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.sample-focus-task .sample-widget-label { color: rgba(124, 94, 42, 0.65); }
-.sample-focus-task .sample-widget-sub { color: rgba(119, 93, 50, 0.72); }
-.sample-focus-task .sample-focus-input { border-color: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 32%, transparent); background: rgba(255, 252, 244, 0.66); color: rgba(62, 46, 19, 0.94); font-weight: 500; }
-.sample-focus-task .sample-focus-meta { color: rgba(123, 95, 50, 0.65); }
-.sample-focus-task .sample-focus-meta span { background: color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 50%, transparent); }
+.focus-task-widget::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+}
+
+.focus-task-widget > * {
+	position: relative;
+	z-index: 1;
+}
+
+.focus-task-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.focus-task-kicker {
+	font-size: 10px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: rgba(231, 223, 208, 0.82);
+}
+
+.focus-task-status {
+	height: 18px;
+	padding: 0 8px;
+	border-radius: 999px;
+	font-size: 8px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(216, 208, 192, 0.86);
+	display: inline-flex;
+	align-items: center;
+}
+
+.focus-task-status.running {
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 58%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 18%, rgba(255, 255, 255, 0.03));
+	color: color-mix(in srgb, var(--theme-accent, #d4a843) 86%, #fff);
+}
+
+.focus-task-content {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 0;
+	flex: 1;
+}
+
+.focus-task-label {
+	font-size: 9px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(201, 193, 176, 0.68);
+}
+
+.focus-task-input {
+	width: 100%;
+	min-height: 0;
+	padding: 10px 12px;
+	border-radius: 12px;
+	border: 1px solid color-mix(in srgb, var(--theme-accent, #d4a843) 28%, rgba(255, 255, 255, 0.12));
+	background: rgba(0, 0, 0, 0.28);
+	color: rgba(244, 246, 249, 0.95);
+	font-size: 13px;
+	font-weight: 500;
+	outline: none;
+	transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.focus-task-input::placeholder {
+	color: rgba(176, 168, 150, 0.58);
+}
+
+.focus-task-input:focus {
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 62%, transparent);
+	background: rgba(0, 0, 0, 0.34);
+}
+
+.focus-timer-progress {
+	height: 5px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.08);
+	overflow: hidden;
+}
+
+.focus-timer-progress span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, color-mix(in srgb, var(--theme-accent, #d4a843) 58%, transparent), color-mix(in srgb, var(--theme-accent, #d4a843) 92%, transparent));
+	transition: width 0.28s ease;
+}
+
+.focus-timer-section {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 8px 10px;
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.focus-timer-display {
+	font-size: 22px;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
+	color: rgba(250, 245, 233, 0.96);
+}
+
+.focus-timer-controls {
+	display: flex;
+	gap: 6px;
+}
+
+.timer-btn {
+	width: 30px;
+	height: 30px;
+	border-radius: 9px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.07);
+	color: rgba(239, 233, 221, 0.92);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.timer-btn:hover {
+	transform: translateY(-1px);
+	border-color: color-mix(in srgb, var(--theme-accent, #d4a843) 58%, transparent);
+	background: color-mix(in srgb, var(--theme-accent, #d4a843) 16%, rgba(255, 255, 255, 0.03));
+}
+
+.focus-task-widget.small {
+	padding: 10px;
+	gap: 8px;
+}
+
+.focus-task-widget.small .focus-task-head {
+	display: none;
+}
+
+.focus-task-widget.small .focus-task-content {
+	gap: 0;
+	justify-content: center;
+}
+
+.focus-task-widget.small .focus-task-input {
+	padding: 8px 10px;
+	font-size: 12px;
+}
