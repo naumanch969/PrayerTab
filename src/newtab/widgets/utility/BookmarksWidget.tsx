@@ -2,32 +2,33 @@ import React from 'react';
 import './bookmarks/styles.css';
 import type { WidgetComponentProps } from '../types';
 
-const links = [
-  { label: 'Quran.com', host: 'quran.com', url: 'https://quran.com' },
-  { label: 'GitHub Prayer Tab', host: 'github.com', url: 'https://github.com' },
-  { label: 'Aladhan API', host: 'aladhan.com', url: 'https://aladhan.com' },
-  { label: 'Chrome Dashboard', host: 'chrome.google.com', url: 'https://chrome.google.com/webstore' },
+const links: Array<{ label: string; url: string }> = [
+  { label: 'Quran', url: 'https://quran.com' },
+  { label: 'Prayer API', url: 'https://aladhan.com' },
+  { label: 'Prayer Tab Repo', url: 'https://github.com' },
+  { label: 'Web Store', url: 'https://chrome.google.com/webstore' },
+  { label: 'Open Meteo', url: 'https://open-meteo.com' },
+  { label: 'Figma', url: 'https://figma.com' },
 ];
 
 const BookmarksWidget: React.FC<WidgetComponentProps> = ({ isEditMode }) => {
   return (
     <div className="sample-widget sample-bookmarks">
-      <div className="sample-widget-label">Bookmarks</div>
-      <div className="sample-bookmark-list">
+      <div className="sample-bookmarks-strip" role="list" aria-label="Saved bookmarks">
         {links.map((link) => (
           <button
             key={link.label}
             type="button"
-            className="sample-bookmark-row"
+            className="sample-bookmark-badge"
             disabled={isEditMode}
+            role="listitem"
+            aria-label={`Open ${link.label}`}
             onClick={() => {
               if (isEditMode) return;
               window.open(link.url, '_blank', 'noopener,noreferrer');
             }}
           >
-            <span className="sample-bookmark-dot" />
-            <span>{link.label}</span>
-            <small>{link.host}</small>
+            {link.label}
           </button>
         ))}
       </div>

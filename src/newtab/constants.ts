@@ -62,7 +62,7 @@ export const WIDGET_SIZE_CONSTRAINTS: Record<WidgetId, WidgetSizeConstraint> = {
     weather: { minW: 288, minH: 180, maxW: 520, maxH: 340 },
     tasbeeh: { minW: 324, minH: 204, maxW: 580, maxH: 420 },
     'ramadan-countdown': { minW: 324, minH: 192, maxW: 640, maxH: 420 },
-    bookmarks: { minW: 312, minH: 192, maxW: 620, maxH: 420 },
+    bookmarks: { minW: 264, minH: 56, maxW: 4000, maxH: 56 },
     note: { minW: 312, minH: 216, maxW: 620, maxH: 460 },
 };
 
@@ -79,7 +79,7 @@ export const WIDGET_DEFAULT_SIZES: Record<WidgetId, WidgetDefaultSize> = {
     weather: { w: 324, h: 204 },
     tasbeeh: { w: 384, h: 240 },
     'ramadan-countdown': { w: 432, h: 240 },
-    bookmarks: { w: 384, h: 240 },
+    bookmarks: { w: 760, h: 56 },
     note: { w: 384, h: 264 },
 };
 

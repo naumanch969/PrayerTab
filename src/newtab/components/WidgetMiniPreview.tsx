@@ -117,6 +117,22 @@ const WeatherMiniPreview: React.FC = () => {
     );
 };
 
+const BOOKMARK_PREVIEW_ITEMS = ['Quran', 'Prayer API', 'Studio', 'Web Store', 'Figma', 'Meteo'];
+
+const BookmarksMiniPreview: React.FC = () => {
+    return (
+        <div className="widget-mini widget-mini-bookmarks">
+            <div className="widget-mini-bookmarks-strip" aria-hidden="true">
+                {BOOKMARK_PREVIEW_ITEMS.map((item) => (
+                    <span key={item} className="widget-mini-bookmark-pill">
+                        {item}
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }) => {
     switch (widgetId) {
         case 'prayer-times':
@@ -198,13 +214,7 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
                 </div>
             );
         case 'bookmarks':
-            return (
-                <div className="widget-mini widget-mini-bookmarks">
-                    <div className="widget-mini-chip">YouTube</div>
-                    <div className="widget-mini-chip">Gmail</div>
-                    <div className="widget-mini-chip">Docs</div>
-                </div>
-            );
+            return <BookmarksMiniPreview />;
         case 'note':
             return (
                 <div className="widget-mini widget-mini-note">

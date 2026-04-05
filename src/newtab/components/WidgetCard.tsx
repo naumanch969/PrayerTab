@@ -74,8 +74,13 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
 
     return (
         <article
-            className={`canvas-widget ${isEditMode ? 'edit-mode' : ''} ${sizeTier} ${interactionKind === 'drag' ? 'is-dragging' : ''} ${interactionKind === 'resize' ? 'is-resizing' : ''}`}
-            style={{ left: layout.x, top: layout.y, width: layout.w, height: layout.h }}
+            className={`canvas-widget ${widgetId} ${isEditMode ? 'edit-mode' : ''} ${sizeTier} ${interactionKind === 'drag' ? 'is-dragging' : ''} ${interactionKind === 'resize' ? 'is-resizing' : ''}`}
+            style={{
+                left: layout.x,
+                top: layout.y,
+                width: layout.w,
+                height: layout.h,
+            }}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
