@@ -298,22 +298,6 @@ const NewTab: React.FC = () => {
         >
             <div className="nt-bg" style={bgStyle} />
             <div className="nt-overlay" style={{ opacity: overlayOpacity / 100 }} />
-
-            {showCustomizePrompt && (
-                <div className="nt-customise-prompt" role="status" aria-live="polite">
-                    <button className="nt-customise-link" onClick={openCustomizeFromPrompt}>
-                        Customise your tab -&gt;
-                    </button>
-                    <button className="nt-customise-dismiss" onClick={markCustomizePromptSeen} aria-label="Dismiss customise prompt">
-                        Later
-                    </button>
-                </div>
-            )}
-
-            <button className="nt-settings-btn" onClick={() => setActiveSettingsTab('settings')} title="Settings" aria-label="Settings">
-                ⚙
-            </button>
-
             <div className="widget-canvas" aria-label="Widget canvas">
                 {isEditEnabled && <div className="canvas-grid-overlay" />}
 
@@ -349,16 +333,6 @@ const NewTab: React.FC = () => {
                 >
                     <Plus size={18} strokeWidth={2.3} />
                 </button>
-                    {!isEditEnabled && (
-                    <button
-                        className="widget-mini-btn"
-                        aria-label="Enter edit mode"
-                        title="Edit layout"
-                        onClick={enterEditMode}
-                    >
-                        Edit
-                    </button>
-                )}
             </div>
 
             <WidgetSidebar

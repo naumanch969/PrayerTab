@@ -6,6 +6,12 @@
 
 import type { CalculationMethod, Location, PrayerTimes } from '../types';
 
+interface AlAdhanResponse {
+  data?: {
+    timings?: Record<string, string>;
+  };
+}
+
 // ── Trig helpers ──────────────────────────────────────────────────────────────
 
 const toRad = (deg: number) => (deg * Math.PI) / 180;
@@ -161,4 +167,114 @@ export function formatCountdown(targetTime: Date): string {
 
 export function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+
+function mapCalculationMethodToAlAdhan(method: CalculationMethod): number {
+  switch (method) {
+    case 'Karachi':
+      return 1;
+    case 'ISNA':
+      return 2;
+    case 'MWL':
+      return 3;
+    case 'Makkah':
+      return 4;
+    case 'Egypt':
+      return 5;
+    case 'Tehran':
+      return 7;
+    case 'Shia':
+      return 0;
+    default:
+      return 3;
+  }
+}
+
+function dateToApiFormat(date: Date): string {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+}
+
+function parseApiTime(raw: string, date: Date): Date {
+  // AlAdhan can return values like "05:10" or "05:10 (+05)".
+  const match = raw.match(/(\d{1,2}):(\d{2})/);
+  const hours = match ? Number(match[1]) : 0;
+  const minutes = match ? Number(match[2]) : 0;
+  return new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    hours,
+    minutes,
+    0,
+    0,
+  );
+}
+
+function getPrayerCacheKey(date: Date, location: Location, method: CalculationMethod): string {
+  const dateKey = date.toISOString().slice(0, 10);
+  const lat = location.latitude.toFixed(3);
+  const lon = location.longitude.toFixed(3);
+  return `prayer-times:${dateKey}:${lat}:${lon}:${method}`;
+}
+
+export async function fetchPrayerTimesFromApi(
+  date: Date,
+  location: Location,
+  method: CalculationMethod,
+): Promise<PrayerTimes | null> {
+  const cacheKey = getPrayerCacheKey(date, location, method);
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached) as PrayerTimes;
+      return {
+        Fajr: new Date(parsed.Fajr),
+        Sunrise: new Date(parsed.Sunrise),
+        Dhuhr: new Date(parsed.Dhuhr),
+        Asr: new Date(parsed.Asr),
+        Maghrib: new Date(parsed.Maghrib),
+        Isha: new Date(parsed.Isha),
+      };
+    } catch {
+      // Ignore invalid cache and fetch fresh data.
+    }
+  }
+
+  try {
+    const methodId = mapCalculationMethodToAlAdhan(method);
+    const school = method === 'Karachi' ? 1 : 0;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const dateParam = dateToApiFormat(date);
+
+    const url = new URL(`https://api.aladhan.com/v1/timings/${dateParam}`);
+    url.searchParams.set('latitude', String(location.latitude));
+    url.searchParams.set('longitude', String(location.longitude));
+    url.searchParams.set('method', String(methodId));
+    url.searchParams.set('school', String(school));
+    url.searchParams.set('timezonestring', timezone);
+
+    const response = await fetch(url.toString());
+    if (!response.ok) return null;
+
+    const payload = (await response.json()) as AlAdhanResponse;
+    const timings = payload.data?.timings;
+    if (!timings) return null;
+
+    const times: PrayerTimes = {
+      Fajr: parseApiTime(timings.Fajr ?? '00:00', date),
+      Sunrise: parseApiTime(timings.Sunrise ?? '00:00', date),
+      Dhuhr: parseApiTime(timings.Dhuhr ?? '00:00', date),
+      Asr: parseApiTime(timings.Asr ?? '00:00', date),
+      Maghrib: parseApiTime(timings.Maghrib ?? timings.Sunset ?? '00:00', date),
+      Isha: parseApiTime(timings.Isha ?? '00:00', date),
+    };
+
+    localStorage.setItem(cacheKey, JSON.stringify(times));
+    return times;
+  } catch {
+    return null;
+  }
 }

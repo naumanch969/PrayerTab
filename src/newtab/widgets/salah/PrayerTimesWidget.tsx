@@ -1,11 +1,12 @@
 import React from 'react';
 import './prayer-times/styles.css';
-import { Compass, Settings, Volume2 } from 'lucide-react';
+import { Compass, Settings } from 'lucide-react';
 import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 
 type PrayerTrack = {
   name: 'Fajr' | 'Sunrise' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
+  short: string;
   time: Date;
   streakKey?: keyof Omit<NonNullable<WidgetComponentProps['runtime']['todayLog']>, 'date'>;
 };
@@ -25,20 +26,33 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
   }
 
   if (!times) {
-    return <div className="widget-body-empty">Set location</div>;
+    return (
+      <div className="widget-body-empty">
+        <div>Set location</div>
+        <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.6 }}>
+          {settings.location ? `(${settings.location.latitude.toFixed(2)}°, ${settings.location.longitude.toFixed(2)}°)` : 'Detecting...'}
+        </div>
+      </div>
+    );
   }
 
   const prayers: PrayerTrack[] = [
-    { name: 'Fajr', time: times.Fajr, streakKey: 'Fajr' },
-    { name: 'Sunrise', time: times.Sunrise },
-    { name: 'Dhuhr', time: times.Dhuhr, streakKey: 'Dhuhr' },
-    { name: 'Asr', time: times.Asr, streakKey: 'Asr' },
-    { name: 'Maghrib', time: times.Maghrib, streakKey: 'Maghrib' },
-    { name: 'Isha', time: times.Isha, streakKey: 'Isha' },
+    { name: 'Fajr', short: 'Fajr', time: times.Fajr, streakKey: 'Fajr' },
+    { name: 'Sunrise', short: 'Sun', time: times.Sunrise },
+    { name: 'Dhuhr', short: 'Dhu', time: times.Dhuhr, streakKey: 'Dhuhr' },
+    { name: 'Asr', short: 'Asr', time: times.Asr, streakKey: 'Asr' },
+    { name: 'Maghrib', short: 'Mag', time: times.Maghrib, streakKey: 'Maghrib' },
+    { name: 'Isha', short: 'Isha', time: times.Isha, streakKey: 'Isha' },
   ];
 
   const formatTime = (date: Date) => date.toLocaleTimeString('en-US', {
     hour: '2-digit',
+    minute: '2-digit',
+    hour12: settings.clockFormat === '12h',
+  });
+
+  const formatTimelineTime = (date: Date) => date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
     minute: '2-digit',
     hour12: settings.clockFormat === '12h',
   });
@@ -94,7 +108,7 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
             const isCompleted = status === 'completed';
             return (
               <div key={p.name} className={`pt-stop ${isActive ? 'active' : ''}`}>
-                <div className="pt-stop-label">{p.name}</div>
+                <div className="pt-stop-label">{p.short}</div>
                 <div className="pt-stop-dot-wrap">
                   {p.streakKey ? (
                     <button
@@ -114,7 +128,7 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
                     <span className="pt-stop-dot sunrise" aria-hidden="true" />
                   )}
                 </div>
-                <div className="pt-stop-time">{formatTime(p.time)}</div>
+                <div className="pt-stop-time">{formatTimelineTime(p.time)}</div>
               </div>
             );
           })}
@@ -126,24 +140,10 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
           <div className="pt-progress-bar">
             <div className="pt-progress-fill" style={{ width: `${progress}%` }} />
           </div>
-          <div className="pt-progress-labels">
-            <span>{prayers[prevIndex].name}</span>
-            <span>{nextPrayerName}</span>
-          </div>
         </div>
       )}
 
       <div className="pt-footer">
-        <button
-          type="button"
-          className="pt-footer-action"
-          disabled={isEditMode}
-          onClick={openPrayerSettings}
-          title="Configure prayer notifications"
-        >
-          <Volume2 size={15} strokeWidth={2} />
-          <span>Athan On</span>
-        </button>
         <button
           type="button"
           className="pt-footer-action"

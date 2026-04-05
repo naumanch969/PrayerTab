@@ -23,7 +23,10 @@
     "https://images.unsplash.com/*",
     "https://nominatim.openstreetmap.org/*",
     "https://api.open-meteo.com/*",
-    "https://loremflickr.com/*"
+    "https://api.aladhan.com/*",
+    "https://loremflickr.com/*",
+    "https://ipapi.co/*",
+    "http://ip-api.com/*"
   ],
   "background": {
     "service_worker": "background.js",

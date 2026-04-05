@@ -1,6 +1,6 @@
 import {
-    BookOpen, CalendarDays, Clock3, CloudSun, Compass, FileText, 
-    GraduationCap, Grid2x2, Info, MessageCircle, Palette, Quote, 
+    BookOpen, CalendarDays, Clock3, CloudSun, Compass, FileText,
+    GraduationCap, Grid2x2, Info, MessageCircle, Palette, Quote,
     Settings2, Sparkles, Target, Wrench
 } from 'lucide-react';
 import type { WidgetId } from '../types';
@@ -22,23 +22,41 @@ export interface WidgetDefaultSize {
 }
 
 export const BACKGROUNDS = [
-    'https://picsum.photos/seed/5prayertab-bg-01/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-02/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-03/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-04/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-05/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-06/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-07/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-08/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-09/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-10/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-11/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-12/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-13/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-14/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-15/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-16/1920/1080',
-    'https://picsum.photos/seed/5prayertab-bg-17/1920/1080'
+    'https://images.unsplash.com/photo-1590092794015-bce5431c83f4',
+    'https://images.unsplash.com/photo-1512970648279-ff3398568f77',
+    'https://images.unsplash.com/photo-1512632578888-169bbbc64f33',
+    'https://images.unsplash.com/flagged/photo-1558113118-e42e558b352a',
+    'https://images.unsplash.com/photo-1696691907697-1293552cb22a',
+    'https://images.unsplash.com/photo-1607398202930-f4c68d729323',
+    'https://images.unsplash.com/photo-1582631313764-62141d98b4bb',
+    'https://images.unsplash.com/photo-1601399681546-ff2983a355c3',
+    'https://images.unsplash.com/photo-1576506637731-8658b2af90eb',
+    'https://images.unsplash.com/photo-1616001597842-6c32246a2116',
+    'https://images.unsplash.com/photo-1667454872134-c25973237138',
+    'https://plus.unsplash.com/premium_photo-1678316899655-1d1250141f33',
+    'https://images.unsplash.com/photo-1692977579997-948328cdb7d2',
+    'https://images.unsplash.com/photo-1729931421786-7bbd6c7d78f6',
+    'https://images.unsplash.com/photo-1731975040348-7ad1c710d4c3',
+    'https://images.unsplash.com/photo-1704104501136-8f35402af395',
+    'https://images.unsplash.com/photo-1542521148-51306e7ffc1e',
+    'https://images.unsplash.com/photo-1649929938487-f1f52b2678a4',
+    'https://images.unsplash.com/photo-1731975040348-7ad1c710d4c3',
+    'https://images.unsplash.com/photo-1705539911460-616908b8b484',
+    'https://images.unsplash.com/photo-1720827118314-a2a9c3a43c53',
+    'https://images.unsplash.com/photo-1577295605163-132e25c3c914',
+    'https://images.unsplash.com/photo-1733149085737-b28c8976d4a5',
+    'https://images.unsplash.com/photo-1727687397122-a5f1f8d735a2',
+    'https://images.unsplash.com/photo-1716221265564-ad9858cb16ea',
+    'https://images.unsplash.com/photo-1674743597643-71144a7450ff',
+    'https://images.unsplash.com/photo-1668297294933-050dbe784dee',
+    'https://images.unsplash.com/photo-1714903229316-7ed7e3764a34',
+    'https://images.unsplash.com/photo-1643185479801-2790e85b58ee',
+    'https://images.unsplash.com/photo-1487800940032-1cf211187aea',
+    'https://plus.unsplash.com/premium_photo-1677355499745-ee3edfba5a79',
+    'https://images.unsplash.com/photo-1575645513913-c002ea3b2e01',
+    'https://images.unsplash.com/photo-1587617425953-9075d28b8c46',
+    'https://images.unsplash.com/photo-1586767003402-8ade266deb64',
+    'https://images.unsplash.com/photo-1568479154218-254dcf09299a',
 ];
 
 export const GRID_SIZE = 12;
