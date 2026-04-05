@@ -2067,6 +2067,7 @@
   scrollbar-width: none;
   align-items: center;
   width: 100%;
+  justify-content: center;
 }
 
 .widget-mini-bookmarks-strip::-webkit-scrollbar {
@@ -2091,17 +2092,75 @@
 }
 
 .widget-mini-note {
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 11px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 8px;
+  min-height: 0;
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--theme-accent, #d4a843) 14%, rgba(11, 10, 8, 0.92)), rgba(8, 8, 7, 0.84)),
+    radial-gradient(circle at 84% 14%, color-mix(in srgb, var(--theme-accent, #d4a843) 16%, transparent) 0%, transparent 42%);
+  border: none;
+  color: var(--t1);
+}
+
+.widget-mini-note::before {
+  display: none;
+}
+
+.widget-mini-note > * {
+  position: relative;
+  z-index: 1;
+}
+
+.widget-mini-note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.widget-mini-note-label {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(233, 224, 204, 0.82);
+}
+
+.widget-mini-note-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--theme-accent, #d4a843) 36%, transparent);
+  background: color-mix(in srgb, var(--theme-accent, #d4a843) 12%, rgba(255, 255, 255, 0.03));
+  color: color-mix(in srgb, var(--theme-accent, #d4a843) 80%, var(--t1));
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .widget-mini-note-paper {
-  background: rgba(236, 206, 120, 0.56);
-  border-radius: 4px;
-  min-height: 64px;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.widget-mini-note-paper::after {
+  display: none;
+}
+
+.widget-mini-note-paper::before {
+  display: none;
 }
 
 .widget-mini-generic {

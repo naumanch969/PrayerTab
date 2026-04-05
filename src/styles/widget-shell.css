@@ -26,6 +26,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
+  margin-bottom: 8px;
 }
 
 .canvas-widget-mode-btn {

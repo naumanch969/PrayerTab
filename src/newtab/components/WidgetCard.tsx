@@ -17,6 +17,7 @@ interface WidgetCardProps {
     isActiveSettings: boolean;
     onToggleSettings: (widgetId: WidgetId) => void;
     onSetDisplayMode: (widgetId: WidgetId, mode: WidgetDisplayMode) => void;
+    onSetNoteFontSize: (widgetId: WidgetId, fontSize: 'small' | 'medium' | 'large') => void;
     onEnterEditMode: () => void;
     settings: UserSettings;
     runtime: WidgetRuntimeData;
@@ -24,7 +25,7 @@ interface WidgetCardProps {
     interactionKind: 'drag' | 'resize' | null;
 }
 
-export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, onEnterEditMode, settings, runtime, index, interactionKind }) => {
+export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, layout, displayMode, onDragStart, onResizeStart, onRemove, isActiveSettings, onToggleSettings, onSetDisplayMode, onSetNoteFontSize, onEnterEditMode, settings, runtime, index, interactionKind }) => {
     const widget = WIDGET_LOOKUP[widgetId];
     const longPressTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const pointerDownRef = React.useRef<{ x: number; y: number } | null>(null);
@@ -71,6 +72,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
     }, []);
 
     const sizeTier = getSizeTier(layout, displayMode);
+    const noteFontSize = settings.widgetPreferences[widgetId]?.noteFontSize ?? 'medium';
 
     return (
         <article
@@ -133,6 +135,23 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
                             </button>
                         ))}
                     </div>
+
+                    {widgetId === 'note' && (
+                        <>
+                            <div className="canvas-widget-settings-title compact">Note Font</div>
+                            <div className="canvas-widget-mode-row">
+                                {(['small', 'medium', 'large'] as const).map((fontSize) => (
+                                    <button
+                                        key={fontSize}
+                                        className={`canvas-widget-mode-btn ${noteFontSize === fontSize ? 'active' : ''}`}
+                                        onClick={() => onSetNoteFontSize(widgetId, fontSize)}
+                                    >
+                                        {fontSize}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
 

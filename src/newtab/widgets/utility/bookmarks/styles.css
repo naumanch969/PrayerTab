@@ -39,6 +39,7 @@
 	scrollbar-width: none;
 	align-items: center;
 	width: 100%;
+	justify-content: center;
 }
 
 .sample-bookmarks .sample-bookmarks-strip::-webkit-scrollbar {

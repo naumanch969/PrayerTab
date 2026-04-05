@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, CheckSquare, CloudRain, CloudSnow, CloudSun, Compass, FileText, Quote, StickyNote, Sun, Wind, Zap } from 'lucide-react';
+import { CalendarDays, CheckSquare, CloudRain, CloudSnow, CloudSun, Compass, FileText, Quote, Sun, Wind, Zap } from 'lucide-react';
 import type { WidgetId } from '../../types';
 
 type MiniWeatherTone = 'sunny' | 'cloudy' | 'rain' | 'snow' | 'windy' | 'storm';
@@ -133,6 +133,19 @@ const BookmarksMiniPreview: React.FC = () => {
     );
 };
 
+const NoteMiniPreview: React.FC = () => {
+    return (
+        <div className="widget-mini widget-mini-note">
+            <div className="widget-mini-note-head">
+                <span className="widget-mini-note-label">Note</span>
+                <span className="widget-mini-note-pill">Saved locally</span>
+            </div>
+
+            <div className="widget-mini-note-paper" aria-hidden="true" />
+        </div>
+    );
+};
+
 export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }) => {
     switch (widgetId) {
         case 'prayer-times':
@@ -216,12 +229,7 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
         case 'bookmarks':
             return <BookmarksMiniPreview />;
         case 'note':
-            return (
-                <div className="widget-mini widget-mini-note">
-                    <StickyNote size={14} strokeWidth={2} />
-                    <div className="widget-mini-note-paper" />
-                </div>
-            );
+            return <NoteMiniPreview />;
         default:
             return (
                 <div className="widget-mini widget-mini-generic">

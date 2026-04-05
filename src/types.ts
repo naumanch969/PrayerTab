@@ -76,6 +76,7 @@ export type BackgroundSource = 'library' | 'solid' | 'gradient' | 'upload' | 'ur
 
 export interface InnerWidgetPreference {
   displayMode: WidgetDisplayMode;
+  noteFontSize?: 'small' | 'medium' | 'large';
 }
 
 export interface LayoutPreset {

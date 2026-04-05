@@ -278,6 +278,17 @@ const NewTab: React.FC = () => {
         persistSettings({ widgetPreferences: nextPreferences });
     };
 
+    const setWidgetNoteFontSize = (widgetId: WidgetId, noteFontSize: 'small' | 'medium' | 'large') => {
+        const nextPreferences = {
+            ...settings.widgetPreferences,
+            [widgetId]: {
+                displayMode: settings.widgetPreferences[widgetId]?.displayMode ?? 'auto',
+                noteFontSize,
+            },
+        };
+        persistSettings({ widgetPreferences: nextPreferences });
+    };
+
     return (
         <div
             className="nt-root"
@@ -320,6 +331,7 @@ const NewTab: React.FC = () => {
                         isActiveSettings={activeWidgetSettingsId === widgetId}
                         onToggleSettings={(id) => setActiveWidgetSettingsId((curr) => (curr === id ? null : id))}
                         onSetDisplayMode={setWidgetDisplayMode}
+                        onSetNoteFontSize={setWidgetNoteFontSize}
                         onEnterEditMode={enterEditMode}
                         settings={settings}
                         runtime={widgetRuntime}
