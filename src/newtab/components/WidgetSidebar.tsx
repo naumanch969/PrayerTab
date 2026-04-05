@@ -31,6 +31,7 @@ interface WidgetSidebarProps {
     activeWidgets: WidgetId[];
     onToggleSidebar: () => void;
     onToggleCollapsed: () => void;
+    onHoverExpandStart: () => void;
     onOpenSettings: (tabId: string) => void;
     onAddWidget: (widgetId: WidgetId) => void;
     activeNav: WidgetNavId | null;
@@ -40,7 +41,7 @@ interface WidgetSidebarProps {
     onToggleEditMode: () => void;
 }
 
-export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onOpenSettings, onAddWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav, onToggleEditMode }) => {
+export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onHoverExpandStart, onOpenSettings, onAddWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav, onToggleEditMode }) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -50,6 +51,7 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                     animate={{ opacity: 1, x: 0, width: isCollapsed ? 78 : 286 }}
                     exit={{ opacity: 0, x: -24 }}
                     transition={{ type: 'spring', stiffness: 240, damping: 30, mass: 0.8 }}
+                    onMouseEnter={onHoverExpandStart}
                     onMouseLeave={onClearActiveNav}
                 >
                     <div

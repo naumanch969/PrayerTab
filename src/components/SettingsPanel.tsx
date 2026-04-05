@@ -52,6 +52,29 @@ const GRADIENTS = [
   'radial-gradient(circle at center, #2d3748, #000000)',
 ];
 
+const HEX_COLOR_PATTERN = /^#([0-9A-F]{3}|[0-9A-F]{6})$/i;
+
+const getInitialSolidColor = (settings: UserSettings): string => {
+  if (settings.backgroundSource === 'solid' && settings.background && HEX_COLOR_PATTERN.test(settings.background)) {
+    return settings.background;
+  }
+  return '#0a0805';
+};
+
+const getInitialGradientColors = (settings: UserSettings): { start: string; end: string } => {
+  const fallback = { start: '#0a0805', end: '#1a1f2e' };
+  if (settings.backgroundSource !== 'gradient' || !settings.background) {
+    return fallback;
+  }
+
+  const matches = settings.background.match(/#(?:[0-9a-fA-F]{3}){1,2}/g);
+  if (!matches || matches.length < 2) {
+    return fallback;
+  }
+
+  return { start: matches[0], end: matches[1] };
+};
+
 const LayoutPresets: React.FC<{ settings: UserSettings; onSave: (u: UserSettings) => void; }> = ({ settings, onSave }) => {
   const [newPresetName, setNewPresetName] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -146,11 +169,14 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
   const [bgUrl, setBgUrl] = useState(settings.background || '');
   const [bgSource, setBgSource] = useState<BackgroundSource>(settings.backgroundSource || 'library');
   const [overlayOpacity, setOverlayOpacity] = useState(settings.backgroundOverlayOpacity ?? 0);
-  const [dailyRotation, setDailyRotation] = useState(settings.backgroundDailyRotation ?? false);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [manualUrl, setManualUrl] = useState(bgUrl && bgUrl.startsWith('http') && !bgUrl.includes('loremflickr') && !bgUrl.includes('unsplash') ? bgUrl : '');
+  const [customSolidColor, setCustomSolidColor] = useState(getInitialSolidColor(settings));
+  const initialGradientColors = getInitialGradientColors(settings);
+  const [customGradientStart, setCustomGradientStart] = useState(initialGradientColors.start);
+  const [customGradientEnd, setCustomGradientEnd] = useState(initialGradientColors.end);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -163,11 +189,6 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
   const handleOpacityChange = (val: number) => {
     setOverlayOpacity(val);
     onSave({ ...settings, backgroundOverlayOpacity: val });
-  };
-  
-  const handleRotationToggle = (val: boolean) => {
-    setDailyRotation(val);
-    onSave({ ...settings, backgroundDailyRotation: val });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,9 +222,19 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
     }
   };
 
+  const applyCustomSolid = (color: string) => {
+    setCustomSolidColor(color);
+    handleSelectBg(color, 'solid');
+  };
+
+  const applyCustomGradient = (startColor: string, endColor: string) => {
+    const gradient = `linear-gradient(135deg, ${startColor} 0%, ${endColor} 100%)`;
+    handleSelectBg(gradient, 'gradient');
+  };
+
   return (
     <div
-      className="bg-modal-layout"
+      className="settings-card bg-modal-card"
       role="dialog"
       aria-modal="true"
       aria-label="Background settings"
@@ -211,54 +242,43 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
       tabIndex={-1}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="bg-modal-sidebar">
-        <div className="bg-modal-title">Select the image</div>
-        <div className="bg-menu-list">
-          {BG_SIDEBAR_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                className={`bg-menu-item ${activeMenu === item.id ? 'active' : ''}`}
-                onClick={() => setActiveMenu(item.id)}
-              >
-                <Icon size={16} />
-                <span>{item.label}</span>
-              </button>
-            )
-          })}
-        </div>
+      <div className="bg-modal-layout">
+        <div className="bg-modal-sidebar">
+          <div className="bg-modal-title">Select the image</div>
+          <div className="bg-menu-list">
+            {BG_SIDEBAR_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  className={`bg-menu-item ${activeMenu === item.id ? 'active' : ''}`}
+                  onClick={() => setActiveMenu(item.id)}
+                >
+                  <Icon size={16} />
+                  <span>{item.label}</span>
+                </button>
+              )
+            })}
+          </div>
 
-        <div className="bg-sidebar-bottom-controls" style={{ marginTop: 'auto', padding: '16px', borderTop: '1px solid var(--glass-border)' }}>
-          <div className="settings-section" style={{ padding: 0, marginBottom: '16px' }}>
-            <label className="settings-label" style={{ fontSize: '11px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              Daily Rotation
-              <input 
-                type="checkbox" 
-                checked={dailyRotation}
-                onChange={(e) => handleRotationToggle(e.target.checked)}
-                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+          <div className="bg-sidebar-bottom-controls" style={{ marginTop: 'auto', padding: '16px', borderTop: '1px solid var(--glass-border)' }}>
+            <div className="settings-section" style={{ padding: 0 }}>
+              <label className="settings-label" style={{ fontSize: '11px' }}>Overlay Darkness ({overlayOpacity}%)</label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={overlayOpacity}
+                onChange={(e) => handleOpacityChange(parseInt(e.target.value, 10))}
+                className="settings-slider"
+                style={{ marginTop: '8px' }}
               />
-            </label>
-          </div>
-          
-          <div className="settings-section" style={{ padding: 0 }}>
-            <label className="settings-label" style={{ fontSize: '11px' }}>Overlay Darkness ({overlayOpacity}%)</label>
-            <input 
-              type="range" 
-              min="0" 
-              max="100" 
-              value={overlayOpacity}
-              onChange={(e) => handleOpacityChange(parseInt(e.target.value, 10))}
-              className="settings-slider" 
-              style={{ marginTop: '8px' }}
-            />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="bg-modal-content">
-        <button className="bg-modal-close" onClick={onClose}><X size={20} /></button>
+        <div className="bg-modal-content">
+          <button className="bg-modal-close" onClick={onClose}><X size={20} /></button>
 
         <div className="bg-content-scroll">
           {activeMenu === 'collections' && (
@@ -355,6 +375,31 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
                     </div>
                   ))}
                 </div>
+
+                <div className="bg-view-panel" style={{ marginTop: '8px' }}>
+                  <label className="settings-label">Custom color</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      aria-label="Pick custom solid color"
+                      value={customSolidColor}
+                      onChange={(e) => applyCustomSolid(e.target.value)}
+                      style={{ width: '48px', height: '40px', border: '1px solid var(--glass-border)', borderRadius: '8px', background: 'transparent', padding: '4px', cursor: 'pointer' }}
+                    />
+                    <input
+                      className="settings-input"
+                      value={customSolidColor}
+                      onChange={(e) => setCustomSolidColor(e.target.value)}
+                      onBlur={() => {
+                        if (HEX_COLOR_PATTERN.test(customSolidColor)) {
+                          applyCustomSolid(customSolidColor);
+                        }
+                      }}
+                      placeholder="#0a0805"
+                      aria-label="Custom solid color hex value"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -372,6 +417,48 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
                       <div className="bg-category-label">Gradient {i + 1}</div>
                     </div>
                   ))}
+                </div>
+
+                <div className="bg-view-panel" style={{ marginTop: '8px' }}>
+                  <label className="settings-label">Custom gradient</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label className="settings-label" style={{ fontSize: '10px' }}>Start</label>
+                      <input
+                        type="color"
+                        aria-label="Pick gradient start color"
+                        value={customGradientStart}
+                        onChange={(e) => {
+                          const next = e.target.value;
+                          setCustomGradientStart(next);
+                          applyCustomGradient(next, customGradientEnd);
+                        }}
+                        style={{ width: '100%', height: '40px', border: '1px solid var(--glass-border)', borderRadius: '8px', background: 'transparent', padding: '4px', cursor: 'pointer' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="settings-label" style={{ fontSize: '10px' }}>End</label>
+                      <input
+                        type="color"
+                        aria-label="Pick gradient end color"
+                        value={customGradientEnd}
+                        onChange={(e) => {
+                          const next = e.target.value;
+                          setCustomGradientEnd(next);
+                          applyCustomGradient(customGradientStart, next);
+                        }}
+                        style={{ width: '100%', height: '40px', border: '1px solid var(--glass-border)', borderRadius: '8px', background: 'transparent', padding: '4px', cursor: 'pointer' }}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="settings-method-btn"
+                    style={{ marginTop: '10px' }}
+                    onClick={() => applyCustomGradient(customGradientStart, customGradientEnd)}
+                  >
+                    Apply custom gradient
+                  </button>
                 </div>
               </div>
             </div>
@@ -396,6 +483,7 @@ const BackgroundSettings: React.FC<{ settings: UserSettings; onSave: (u: UserSet
               )}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
@@ -576,81 +664,67 @@ const GeneralSettings: React.FC<{ tab: string; settings: UserSettings; onSave: (
           </div>
         )}
 
-        {tab === 'about' && (
-          <div className="settings-about-wrapper">
-            <img src="/icons/icon128.png" alt="PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
-            <h2 className="about-heading">PrayerTab</h2>
-            <p className="about-version">Version 1.0.0</p>
-            <p className="about-desc">A serene, focus-driven dashboard designed to keep your intentions, prayers, and daily reflections perfectly aligned throughout the day.</p>
-            <div className="about-links">
-              <a href="#" className="about-link">Privacy Policy</a>
-              <span className="dot-sep">•</span>
-              <a href="#" className="about-link">Terms of Service</a>
-              <span className="dot-sep">•</span>
-              <a href="https://github.com/your-repo/PrayerTab" target="_blank" rel="noreferrer" className="about-link">Github Repository</a>
-            </div>
-          </div>
-        )}
-
         {tab === 'feedback' && (
-          <div className="settings-panel-content-flex">
-            <div className="feedback-hero">
-              <div className="feedback-visual">
-                <MessageCircle size={48} className="feedback-accent-icon" />
+          <div className="settings-grid settings-info-grid">
+            <section className="settings-section settings-info-card">
+              <div className="settings-info-head">
+                <MessageCircle size={24} />
+                <h3>Share Your Thoughts</h3>
               </div>
-              <h2 className="feedback-title">Share Your Thoughts</h2>
-              <p className="feedback-intro">
-                Help us craft the ultimate companion for your spiritual journey. 
-                Whether it's a bug, a feature request, or a simple greeting, we're all ears.
-              </p>
-
-              <div className="feedback-options">
-                <button 
-                  className="settings-action-btn primary full-width" 
-                  onClick={() => window.open('https://github.com/yourusername/5PrayerTab/issues', '_blank')}
-                >
+              <p className="settings-hint">Help us craft the best spiritual companion for your daily tab. Share bugs, feature ideas, or general feedback.</p>
+              <div className="settings-data-actions">
+                <button className="settings-action-btn primary" onClick={() => window.open('https://github.com/yourusername/5PrayerTab/issues', '_blank')}>
                   Report a Bug on GitHub
                 </button>
-                <div className="feedback-divider">or</div>
-                <button 
-                  className="settings-action-btn ghost full-width" 
-                  onClick={() => window.open('mailto:salam@5prayertab.com?subject=Feature Idea')}
-                >
+                <button className="settings-action-btn" onClick={() => window.open('mailto:salam@5prayertab.com?subject=Feature Idea')}>
                   Suggest a Feature via Email
                 </button>
               </div>
-            </div>
+            </section>
+
+            <section className="settings-section settings-info-card">
+              <label className="settings-label">Quick Message</label>
+              <textarea
+                className="settings-textarea"
+                rows={6}
+                placeholder="Tell us what should be improved in PrayerTab..."
+              />
+              <button className="settings-action-btn" onClick={() => window.open('mailto:salam@5prayertab.com?subject=PrayerTab%20Feedback', '_blank')}>
+                Send via Email
+              </button>
+            </section>
           </div>
         )}
 
         {tab === 'about' && (
-          <div className="settings-panel-content-flex">
-            <div className="about-hero">
-              <div className="about-logo-wrap">
-                <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" />
-              </div>
-              <h1 className="about-app-name">5PrayerTab</h1>
-              <div className="about-version">Version 1.2.0 • Stable</div>
-              
-              <div className="about-card">
-                <p className="about-mission">
-                  Our mission is to provide Muslims with a distraction-free, 
-                  spiritually-aligned new tab experience that keeps 
-                  them connected to their faith throughout their digital day.
-                </p>
-                <div className="about-links">
-                  <a href="#" className="about-link">Website</a>
-                  <span className="dot-sep" />
-                  <a href="#" className="about-link">Privacy</a>
-                  <span className="dot-sep" />
-                  <a href="#" className="about-link">Terms</a>
+          <div className="settings-grid settings-info-grid">
+            <section className="settings-section settings-info-card about-card-top">
+              <div className="settings-info-brand">
+                <img src="/icons/icon128.png" alt="5PrayerTab Logo" className="about-logo" onError={(e) => e.currentTarget.style.display = 'none'} />
+                <div>
+                  <h2 className="about-heading">5PrayerTab</h2>
+                  <p className="about-version">Version 1.2.0 • Stable</p>
                 </div>
               </div>
+              <p className="about-desc">A distraction-free, spiritually aligned new tab experience that keeps prayer, reflection, and daily intention in view.</p>
+            </section>
 
-              <div className="about-footer-copy">
-                Crafted with intention by the Aether community.
+            <section className="settings-section settings-info-card">
+              <label className="settings-label">Project</label>
+              <p className="settings-hint">Crafted with intention to support mindful browsing and consistent worship routines.</p>
+              <p className="settings-hint">Built by Opstin Technologies.</p>
+              <div className="about-links">
+                <a href="https://opstintechnologies.com" target="_blank" rel="noreferrer" className="about-link">Opstin Technologies</a>
+                <span className="dot-sep">•</span>
+                <a href="#" className="about-link">Website</a>
+                <span className="dot-sep">•</span>
+                <a href="#" className="about-link">Privacy</a>
+                <span className="dot-sep">•</span>
+                <a href="#" className="about-link">Terms</a>
+                <span className="dot-sep">•</span>
+                <a href="https://github.com/your-repo/PrayerTab" target="_blank" rel="noreferrer" className="about-link">GitHub</a>
               </div>
-            </div>
+            </section>
           </div>
         )}
       </div>
@@ -731,7 +805,20 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ activeTab, settings, onSa
   }, [onClose]);
 
   return (
-    <div className="settings-overlay" onClick={onClose} ref={overlayRef}>
+    <div
+      className="settings-overlay"
+      ref={overlayRef}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+    >
       {activeTab === 'background' ? (
         <BackgroundSettings settings={settings} onSave={onSave} onClose={onClose} />
       ) : (

@@ -11,9 +11,9 @@
   --t3:    #7a7670;
 
   --gold:       var(--theme-accent, #d4a843);
-  --gold-text:  #f3d89a;
-  --gold-dim:   color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 15%, transparent);
-  --gold-glow:  color-mix(in srgb, var(--theme-accent, var(--theme-accent, #d4a843)) 30%, transparent);
+  --gold-text:  color-mix(in srgb, var(--theme-accent, #d4a843) 68%, white);
+  --gold-dim:   color-mix(in srgb, var(--theme-accent, #d4a843) 15%, transparent);
+  --gold-glow:  color-mix(in srgb, var(--theme-accent, #d4a843) 33%, transparent);
 
   --green:      #4caf7d;
   --green-dim:  rgba(76, 175, 125, 0.18);

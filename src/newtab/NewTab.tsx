@@ -1,9 +1,9 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { RotateCcw, RotateCw, X, Check, Search, Plus, Trash2, Layout } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useStorage } from '../hooks/useStorage';
 import Onboarding from '../components/Onboarding';
 import SettingsPanel from '../components/SettingsPanel';
-import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout, LayoutPreset, InnerWidgetPreference } from '../types';
+import type { UserSettings, WidgetDisplayMode, WidgetId, WidgetLayout } from '../types';
 import type { WidgetRuntimeData } from './widgets/types';
 
 import { NAV_WIDGETS } from './constants';
@@ -26,7 +26,6 @@ const NewTab: React.FC = () => {
     const [activeWidgetSettingsId, setActiveWidgetSettingsId] = useState<WidgetId | null>(null);
     const [undoStack, setUndoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
     const [redoStack, setRedoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
-    const [editSessionSnapshot, setEditSessionSnapshot] = useState<Partial<Record<WidgetId, WidgetLayout>> | null>(null);
 
     const promptSeenPersisted = useRef(false);
     const settingsRef = useRef<UserSettings | null>(null);
@@ -36,11 +35,7 @@ const NewTab: React.FC = () => {
     const bgStyle = useMemo(() => {
         const source = storage.settings?.backgroundSource;
         const bgVal = storage.settings?.background;
-        
-        if (storage.settings?.backgroundDailyRotation) {
-            return { backgroundImage: `url(${getDailyBackground(new Date())})` };
-        }
-        
+
         if (source === 'solid' && bgVal) {
             return { backgroundColor: bgVal };
         }
@@ -119,7 +114,6 @@ const NewTab: React.FC = () => {
 
     const enterEditMode = () => {
         if (!settings) return;
-        setEditSessionSnapshot(cloneLayouts(layoutDraft));
         setUndoStack([]);
         setRedoStack([]);
         setIsEditMode(true);
@@ -157,77 +151,10 @@ const NewTab: React.FC = () => {
         });
     };
 
-    const cancelEdit = () => {
-        if (!isEditMode || !editSessionSnapshot) {
-            exitEditMode();
-            return;
-        }
-
-        setLayoutDraft(editSessionSnapshot);
-        persistSettings({ widgetLayouts: editSessionSnapshot as Record<WidgetId, WidgetLayout> });
+    const finishEditMode = () => {
         setUndoStack([]);
         setRedoStack([]);
-        setEditSessionSnapshot(null);
         exitEditMode();
-    };
-
-    const doneEdit = () => {
-        setUndoStack([]);
-        setRedoStack([]);
-        setEditSessionSnapshot(null);
-        exitEditMode();
-    };
-
-    const recoverLayoutToViewport = () => {
-        const nextLayouts: Partial<Record<WidgetId, WidgetLayout>> = {};
-
-        addedWidgets.forEach((widgetId, index) => {
-            const source = layoutDraft[widgetId] ?? settings.widgetLayouts[widgetId] ?? defaultLayoutForIndex(index, widgetId);
-            const normalized = normalizeLayout(widgetId, source);
-            nextLayouts[widgetId] = clampLayoutToViewport(normalized);
-        });
-
-        if (isEditMode) {
-            pushUndoSnapshot();
-        }
-        setLayoutDraft(nextLayouts);
-        persistSettings({ widgetLayouts: nextLayouts as Record<WidgetId, WidgetLayout> });
-    };
-
-    const applyPreset = (preset: LayoutPreset) => {
-        if (!isEditMode) {
-            enterEditMode();
-        } else {
-            pushUndoSnapshot();
-        }
-
-        setLayoutDraft(preset.layouts);
-        persistSettings({
-            enabledWidgets: preset.widgets,
-            widgetLayouts: preset.layouts as Record<WidgetId, WidgetLayout>,
-            widgetPreferences: preset.preferences as Record<WidgetId, InnerWidgetPreference>,
-        });
-    };
-
-    const saveCustomPreset = (name: string) => {
-        if (!settings) return;
-        
-        const newPreset: LayoutPreset = {
-            id: `custom-${Date.now()}`,
-            name,
-            widgets: [...addedWidgets],
-            layouts: cloneLayouts(layoutDraft),
-            preferences: { ...settings.widgetPreferences },
-        };
-
-        const nextCustomPresets = [...(settings.customPresets || []), newPreset];
-        persistSettings({ customPresets: nextCustomPresets });
-    };
-
-    const deleteCustomPreset = (presetId: string) => {
-        if (!settings || !settings.customPresets) return;
-        const nextCustomPresets = settings.customPresets.filter((p) => p.id !== presetId);
-        persistSettings({ customPresets: nextCustomPresets });
     };
 
     useEffect(() => {
@@ -236,7 +163,7 @@ const NewTab: React.FC = () => {
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 event.preventDefault();
-                cancelEdit();
+                finishEditMode();
                 return;
             }
 
@@ -257,7 +184,7 @@ const NewTab: React.FC = () => {
 
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [isEditMode, undoStack, redoStack, layoutDraft, editSessionSnapshot]);
+    }, [isEditMode, undoStack, redoStack, layoutDraft]);
 
     const layoutDraftRef = useRef(layoutDraft);
 
@@ -308,6 +235,23 @@ const NewTab: React.FC = () => {
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (!activeWidgetSettingsId) return;
+
+        const onGlobalPointerDown = (event: PointerEvent) => {
+            const target = event.target as HTMLElement | null;
+            if (!target) return;
+
+            if (target.closest('.canvas-widget-settings-popover')) return;
+            if (target.closest('.canvas-widget-control-btn')) return;
+
+            setActiveWidgetSettingsId(null);
+        };
+
+        window.addEventListener('pointerdown', onGlobalPointerDown);
+        return () => window.removeEventListener('pointerdown', onGlobalPointerDown);
+    }, [activeWidgetSettingsId]);
 
     const markCustomizePromptSeen = () => {
         setShowCustomizePrompt(false);
@@ -407,7 +351,18 @@ const NewTab: React.FC = () => {
     };
 
     return (
-        <div className="nt-root" data-theme={settings.themeMode || 'glass'} data-font={settings.fontFamily || 'inter'} style={{ '--theme-accent': settings.themeAccent || '#d4a843' } as React.CSSProperties}>
+        <div
+            className="nt-root"
+            data-theme={settings.themeMode || 'glass'}
+            data-font={settings.fontFamily || 'inter'}
+            style={{
+                '--theme-accent': settings.themeAccent || '#d4a843',
+                '--gold': settings.themeAccent || '#d4a843',
+                '--gold-text': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 68%, white)`,
+                '--gold-dim': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 15%, transparent)`,
+                '--gold-glow': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 33%, transparent)`,
+            } as React.CSSProperties}
+        >
             <div className="nt-bg" style={bgStyle} />
             <div className="nt-overlay" style={{ opacity: overlayOpacity / 100 }} />
 
@@ -472,30 +427,6 @@ const NewTab: React.FC = () => {
                 )}
             </div>
 
-            {isEditMode && (
-                <div className="nt-edit-toolbar" role="toolbar" aria-label="Edit mode tools">
-                    <button className="nt-edit-tool" onClick={undoEdit} disabled={undoStack.length === 0} title="Undo (Ctrl/Cmd+Z)">
-                        <RotateCcw size={14} strokeWidth={2.2} />
-                        Undo
-                    </button>
-                    <button className="nt-edit-tool" onClick={redoEdit} disabled={redoStack.length === 0} title="Redo (Shift+Ctrl/Cmd+Z)">
-                        <RotateCw size={14} strokeWidth={2.2} />
-                        Redo
-                    </button>
-                    <button className="nt-edit-tool" onClick={recoverLayoutToViewport} title="Recover widgets to viewport">
-                        Recover
-                    </button>
-                    <button className="nt-edit-tool danger" onClick={cancelEdit} title="Cancel changes (Esc)">
-                        <X size={14} strokeWidth={2.2} />
-                        Cancel
-                    </button>
-                    <button className="nt-edit-tool primary" onClick={doneEdit} title="Done editing">
-                        <Check size={14} strokeWidth={2.2} />
-                        Done
-                    </button>
-                </div>
-            )}
-
             <WidgetSidebar
                 isOpen={sidebarOpen}
                 isEditMode={isEditMode}
@@ -504,6 +435,11 @@ const NewTab: React.FC = () => {
                 activeWidgets={activeWidgets}
                 onToggleSidebar={() => setSidebarOpen((current) => !current)}
                 onToggleCollapsed={() => setSidebarCollapsed((current) => !current)}
+                onHoverExpandStart={() => {
+                    if (sidebarCollapsed) {
+                        setSidebarCollapsed(false);
+                    }
+                }}
                 onOpenSettings={(tabId) => setActiveSettingsTab(tabId)}
                 onAddWidget={addWidget}
                 activeNav={activeNav}
@@ -515,7 +451,7 @@ const NewTab: React.FC = () => {
                 onClearActiveNav={() => setActiveNav(null)}
                 onToggleEditMode={() => {
                     if (isEditMode) {
-                        doneEdit();
+                        finishEditMode();
                     } else {
                         enterEditMode();
                     }

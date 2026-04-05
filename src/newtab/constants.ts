@@ -22,23 +22,23 @@ export interface WidgetDefaultSize {
 }
 
 export const BACKGROUNDS = [
-    'https://images.unsplash.com/photo-1564769662533-4f00a87b4056?w=1920&q=80',
-    'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=1920&q=80',
-    'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=1920&q=80',
-    'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=1920&q=80',
-    'https://images.unsplash.com/photo-1559329373-916f3239e5c8?w=1920&q=80',
-    'https://images.unsplash.com/photo-1582046297314-c102bd5064e1?w=1920&q=80',
-    'https://images.unsplash.com/photo-1551041777-ed277b8dd348?w=1920&q=80',
-    'https://images.unsplash.com/photo-1623824361541-1f9e29a99da9?w=1920&q=80',
-    'https://images.unsplash.com/photo-1588667822501-c918a93e3518?w=1920&q=80',
-    'https://images.unsplash.com/photo-1565551368153-65239e144fe9?w=1920&q=80',
-    'https://images.unsplash.com/photo-1580467104330-80410ff11df6?w=1920&q=80',
-    'https://images.unsplash.com/photo-1626284666579-22a4505f0393?w=1920&q=80',
-    'https://images.unsplash.com/photo-1582216839352-8706316715f3?w=1920&q=80',
-    'https://images.unsplash.com/photo-1624869503463-5490bc8cb4ae?w=1920&q=80',
-    'https://images.unsplash.com/photo-1605658661642-1e9bf4c01a5d?w=1920&q=80',
-    'https://images.unsplash.com/photo-1598887142487-3c854d51d4c8?w=1920&q=80',
-    'https://images.unsplash.com/photo-1519754876612-409fcb4a8ce8?w=1920&q=80'
+    'https://picsum.photos/seed/5prayertab-bg-01/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-02/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-03/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-04/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-05/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-06/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-07/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-08/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-09/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-10/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-11/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-12/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-13/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-14/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-15/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-16/1920/1080',
+    'https://picsum.photos/seed/5prayertab-bg-17/1920/1080'
 ];
 
 export const GRID_SIZE = 12;

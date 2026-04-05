@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './prayer-times/styles.css';
+import { Compass, Settings, Volume2 } from 'lucide-react';
 import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 
-const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier }) => {
+const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, settings, sizeTier }) => {
+  const [showQiblaPreview, setShowQiblaPreview] = useState(false);
   const { times, nextPrayer, countdown, loading } = usePrayerTimes(settings.location, settings.calculationMethod);
 
   if (loading) {
@@ -16,6 +18,7 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier 
 
   const prayers = [
     { name: 'Fajr', time: times.Fajr },
+    { name: 'Sunrise', time: times.Sunrise },
     { name: 'Dhuhr', time: times.Dhuhr },
     { name: 'Asr', time: times.Asr },
     { name: 'Maghrib', time: times.Maghrib },
@@ -28,12 +31,18 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier 
     hour12: settings.clockFormat === '12h',
   });
 
+  const nextPrayerName = nextPrayer?.name ?? 'Prayer';
+  const nextPrayerTime = nextPrayer ? formatTime(nextPrayer.time) : '--:--';
+  const msRemaining = Math.max(0, (nextPrayer?.time.getTime() ?? Date.now()) - Date.now());
+  const minsRemaining = Math.max(0, Math.ceil(msRemaining / 60000));
+  const minsLabel = `${minsRemaining} MIN${minsRemaining === 1 ? '' : 'S'}`;
+
   if (sizeTier === 'small') {
     return (
-      <div className="prayer-widget-small">
-        <div className="prayer-small-next">{nextPrayer?.name}</div>
-        <div className="prayer-small-time">{nextPrayer ? formatTime(nextPrayer.time) : '--:--'}</div>
-        <div className="prayer-small-countdown">{countdown}</div>
+      <div className="pt-card pt-card-small">
+        <div className="pt-small-name">{nextPrayerName}</div>
+        <div className="pt-small-time">{nextPrayerTime}</div>
+        <div className="pt-small-pill">IN {minsLabel}</div>
       </div>
     );
   }
@@ -46,32 +55,95 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier 
   const progress = Math.max(0, Math.min(100, ((now - prevTime) / Math.max(nextTime - prevTime, 1)) * 100));
 
   return (
-    <div className={`prayer-widget-full ${sizeTier}`}>
-      <div className="prayer-header">
-        <span className="prayer-header-title">Prayer Times</span>
-        {sizeTier === 'large' && <span className="prayer-header-next">{nextPrayer?.name} in {countdown}</span>}
+    <div className={`pt-card pt-card-full ${sizeTier}`}>
+      <div className="pt-hero">
+        <div className="pt-hero-left">
+          <h3 className="pt-title">{nextPrayerName}</h3>
+          <p className="pt-subtitle">Upcoming Prayer</p>
+        </div>
+        <div className="pt-hero-right">
+          <div className="pt-main-time">{nextPrayerTime}</div>
+          <div className="pt-badge">IN {minsLabel}</div>
+        </div>
       </div>
 
-      <div className="prayer-list">
-        {prayers.map(p => (
-          <div key={p.name} className={`prayer-row ${nextPrayer?.name === p.name ? 'active' : ''}`}>
-            <span className="prayer-name">{p.name}</span>
-            <span className="prayer-time">{formatTime(p.time)}</span>
-          </div>
-        ))}
+      <div className="pt-timeline-wrap">
+        <div className="pt-track-line" />
+        <div className="pt-timeline-grid">
+          {prayers.map((p) => {
+            const isActive = p.name === nextPrayerName;
+            return (
+              <div key={p.name} className={`pt-stop ${isActive ? 'active' : ''}`}>
+                <div className="pt-stop-label">{p.name}</div>
+                <div className="pt-stop-dot-wrap">
+                  <div className="pt-stop-dot" />
+                </div>
+                <div className="pt-stop-time">{formatTime(p.time)}</div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {sizeTier === 'large' && (
-        <div className="prayer-progress-section">
-          <div className="prayer-progress-bar">
-            <div className="prayer-progress-fill" style={{ width: `${progress}%` }} />
+        <div className="pt-progress-wrap">
+          <div className="pt-progress-bar">
+            <div className="pt-progress-fill" style={{ width: `${progress}%` }} />
           </div>
-          <div className="prayer-progress-labels">
+          <div className="pt-progress-labels">
             <span>{prayers[prevIndex].name}</span>
-            <span>{nextPrayer?.name}</span>
+            <span>{nextPrayerName}</span>
           </div>
         </div>
       )}
+
+      <div className="pt-footer">
+        <button
+          type="button"
+          className="pt-footer-action"
+          disabled={isEditMode}
+          onClick={() => {
+            if (!isEditMode) {
+              chrome.runtime.openOptionsPage?.();
+            }
+          }}
+          title="Configure prayer notifications"
+        >
+          <Volume2 size={15} strokeWidth={2} />
+          <span>Athan On</span>
+        </button>
+        <button
+          type="button"
+          className="pt-footer-action"
+          disabled={isEditMode}
+          onClick={() => {
+            if (!isEditMode) {
+              setShowQiblaPreview(!showQiblaPreview);
+            }
+          }}
+          title="Show Qibla direction"
+        >
+          <Compass size={15} strokeWidth={2} />
+          <span>Qibla</span>
+        </button>
+        <div className="pt-footer-icons">
+          <div className="pt-avatar-dot" aria-hidden="true" />
+          <button
+            type="button"
+            className="pt-settings-dot"
+            disabled={isEditMode}
+            onClick={() => {
+              if (!isEditMode) {
+                chrome.runtime.openOptionsPage?.();
+              }
+            }}
+            aria-label="Prayer widget settings"
+            title="Prayer settings"
+          >
+            <Settings size={14} strokeWidth={2.4} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
