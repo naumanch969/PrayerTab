@@ -24,33 +24,38 @@ const QiblaCompassWidget: React.FC<WidgetComponentProps> = ({ settings, sizeTier
 
   if (sizeTier === 'small') {
     return (
-      <div className="qibla-widget small">
-        <div className="qibla-needle-wrap">
-          <div className="qibla-needle" style={{ transform: `rotate(${bearing}deg)` }} />
+      <div className="salah-qibla-widget small">
+        <div className="salah-qibla-needle-wrap">
+          <div className="salah-qibla-needle" style={{ transform: `rotate(${bearing}deg)` }} />
         </div>
-        <div className="qibla-value">{Math.round(bearing)}°</div>
+        <div className="salah-qibla-value">{Math.round(bearing)}°</div>
       </div>
     );
   }
 
   return (
-    <div className={`qibla-widget ${sizeTier}`}>
-      <div className="qibla-compass-box">
-        <div className="qibla-ring">
+    <div className={`salah-qibla-widget ${sizeTier}`}>
+      <div className="salah-qibla-head">
+        <span className="salah-qibla-kicker">Qibla Direction</span>
+        <span className="salah-qibla-pill">{Math.round(bearing)}°</span>
+      </div>
+
+      <div className="salah-qibla-compass-box">
+        <div className="salah-qibla-ring">
           <span className="n">N</span>
           <span className="e">E</span>
           <span className="s">S</span>
           <span className="w">W</span>
-          <div className="qibla-bearing-line" style={{ transform: `rotate(${bearing}deg)` }}>
-             <div className="qibla-pointer" />
+          <div className="salah-qibla-bearing-line" style={{ transform: `rotate(${bearing}deg)` }}>
+             <div className="salah-qibla-pointer" />
           </div>
         </div>
         
-        <div className="qibla-info">
-          <div className="qibla-bearing-big">{Math.round(bearing)}°</div>
-          <div className="qibla-cardinal">{cardinal}</div>
+        <div className="salah-qibla-info">
+          <div className="salah-qibla-bearing-big">{cardinal}</div>
+          <div className="salah-qibla-cardinal">Facing Makkah</div>
           {sizeTier === 'large' && (
-            <div className="qibla-distance">{distance.toLocaleString()} km to Kaaba</div>
+            <div className="salah-qibla-distance">{distance.toLocaleString()} km to Kaaba</div>
           )}
         </div>
       </div>

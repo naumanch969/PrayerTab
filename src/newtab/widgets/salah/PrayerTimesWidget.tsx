@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './prayer-times/styles.css';
 import { Compass, Settings, Volume2 } from 'lucide-react';
 import { usePrayerTimes } from '../../../hooks/usePrayerTimes';
 import type { WidgetComponentProps } from '../types';
 
-const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, settings, sizeTier }) => {
-  const [showQiblaPreview, setShowQiblaPreview] = useState(false);
+type PrayerTrack = {
+  name: 'Fajr' | 'Sunrise' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
+  time: Date;
+  streakKey?: keyof Omit<NonNullable<WidgetComponentProps['runtime']['todayLog']>, 'date'>;
+};
+
+const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, settings, sizeTier, runtime }) => {
   const { times, nextPrayer, countdown, loading } = usePrayerTimes(settings.location, settings.calculationMethod);
+
+  const openPrayerSettings = () => {
+    if (isEditMode) return;
+    if (typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    }
+  };
 
   if (loading) {
     return <div className="widget-body-empty">Loading salah...</div>;
@@ -16,13 +28,13 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
     return <div className="widget-body-empty">Set location</div>;
   }
 
-  const prayers = [
-    { name: 'Fajr', time: times.Fajr },
+  const prayers: PrayerTrack[] = [
+    { name: 'Fajr', time: times.Fajr, streakKey: 'Fajr' },
     { name: 'Sunrise', time: times.Sunrise },
-    { name: 'Dhuhr', time: times.Dhuhr },
-    { name: 'Asr', time: times.Asr },
-    { name: 'Maghrib', time: times.Maghrib },
-    { name: 'Isha', time: times.Isha },
+    { name: 'Dhuhr', time: times.Dhuhr, streakKey: 'Dhuhr' },
+    { name: 'Asr', time: times.Asr, streakKey: 'Asr' },
+    { name: 'Maghrib', time: times.Maghrib, streakKey: 'Maghrib' },
+    { name: 'Isha', time: times.Isha, streakKey: 'Isha' },
   ];
 
   const formatTime = (date: Date) => date.toLocaleTimeString('en-US', {
@@ -36,6 +48,9 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
   const msRemaining = Math.max(0, (nextPrayer?.time.getTime() ?? Date.now()) - Date.now());
   const minsRemaining = Math.max(0, Math.ceil(msRemaining / 60000));
   const minsLabel = `${minsRemaining} MIN${minsRemaining === 1 ? '' : 'S'}`;
+  const completedToday = runtime.todayLog
+    ? prayers.filter((prayer) => prayer.streakKey && runtime.todayLog?.[prayer.streakKey] === 'completed').length
+    : 0;
 
   if (sizeTier === 'small') {
     return (
@@ -60,6 +75,9 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
         <div className="pt-hero-left">
           <h3 className="pt-title">{nextPrayerName}</h3>
           <p className="pt-subtitle">Upcoming Prayer</p>
+          {settings.location?.city && sizeTier === 'large' && (
+            <p className="pt-city">{settings.location.city}</p>
+          )}
         </div>
         <div className="pt-hero-right">
           <div className="pt-main-time">{nextPrayerTime}</div>
@@ -72,11 +90,29 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
         <div className="pt-timeline-grid">
           {prayers.map((p) => {
             const isActive = p.name === nextPrayerName;
+            const status = p.streakKey ? (runtime.todayLog?.[p.streakKey] ?? 'pending') : 'pending';
+            const isCompleted = status === 'completed';
             return (
               <div key={p.name} className={`pt-stop ${isActive ? 'active' : ''}`}>
                 <div className="pt-stop-label">{p.name}</div>
                 <div className="pt-stop-dot-wrap">
-                  <div className="pt-stop-dot" />
+                  {p.streakKey ? (
+                    <button
+                      type="button"
+                      className={`pt-stop-check ${isCompleted ? 'completed' : ''}`}
+                      title={`${p.name}: ${status}`}
+                      onClick={() => {
+                        if (isEditMode) return;
+                        void runtime.togglePrayer(p.streakKey!, status);
+                      }}
+                      disabled={isEditMode}
+                      aria-label={`Mark ${p.name} as ${isCompleted ? 'pending' : 'completed'}`}
+                    >
+                      {isCompleted ? <span className="pt-stop-check-mark">✓</span> : null}
+                    </button>
+                  ) : (
+                    <span className="pt-stop-dot sunrise" aria-hidden="true" />
+                  )}
                 </div>
                 <div className="pt-stop-time">{formatTime(p.time)}</div>
               </div>
@@ -102,11 +138,7 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
           type="button"
           className="pt-footer-action"
           disabled={isEditMode}
-          onClick={() => {
-            if (!isEditMode) {
-              chrome.runtime.openOptionsPage?.();
-            }
-          }}
+          onClick={openPrayerSettings}
           title="Configure prayer notifications"
         >
           <Volume2 size={15} strokeWidth={2} />
@@ -118,25 +150,23 @@ const PrayerTimesWidget: React.FC<WidgetComponentProps> = ({ isEditMode, setting
           disabled={isEditMode}
           onClick={() => {
             if (!isEditMode) {
-              setShowQiblaPreview(!showQiblaPreview);
+              window.open('https://qiblafinder.withgoogle.com/', '_blank', 'noopener,noreferrer');
             }
           }}
-          title="Show Qibla direction"
+          title="Open Qibla Finder"
         >
           <Compass size={15} strokeWidth={2} />
           <span>Qibla</span>
         </button>
         <div className="pt-footer-icons">
-          <div className="pt-avatar-dot" aria-hidden="true" />
+          <div className="pt-completed-chip" title="Completed today" aria-label="Completed today">
+            {completedToday}/5
+          </div>
           <button
             type="button"
             className="pt-settings-dot"
             disabled={isEditMode}
-            onClick={() => {
-              if (!isEditMode) {
-                chrome.runtime.openOptionsPage?.();
-              }
-            }}
+            onClick={openPrayerSettings}
             aria-label="Prayer widget settings"
             title="Prayer settings"
           >

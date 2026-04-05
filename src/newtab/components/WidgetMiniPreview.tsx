@@ -150,26 +150,57 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
     switch (widgetId) {
         case 'prayer-times':
             return (
-                <div className="widget-mini widget-mini-prayers">
-                    <div className="widget-mini-line" />
-                    <div className="widget-mini-line" />
-                    <div className="widget-mini-line" />
+                <div className="widget-mini widget-mini-salah-prayers">
+                    <div className="widget-mini-salah-prayers-head">
+                        <span>Dhuhr</span>
+                        <span>1:18 PM</span>
+                    </div>
+                    <div className="widget-mini-salah-prayers-track"><span /></div>
+                    <div className="widget-mini-salah-prayers-grid">
+                        <span>Fajr</span>
+                        <span className="active">Dhuhr</span>
+                        <span>Asr</span>
+                    </div>
                 </div>
             );
         case 'next-prayer':
+            return (
+                <div className="widget-mini widget-mini-salah-next">
+                    <div className="widget-mini-salah-next-head">
+                        <span>Next Prayer</span>
+                        <span>1:18 PM</span>
+                    </div>
+                    <div className="widget-mini-salah-next-name">Dhuhr</div>
+                    <div className="widget-mini-salah-next-countdown">01:42:15</div>
+                    <div className="widget-mini-salah-next-track"><span /></div>
+                </div>
+            );
         case 'ramadan-countdown':
             return (
-                <div className="widget-mini widget-mini-countdown">
-                    <div className="widget-mini-seg" />
-                    <div className="widget-mini-seg" />
-                    <div className="widget-mini-seg" />
+                <div className="widget-mini widget-mini-salah-ramadan">
+                    <div className="widget-mini-salah-ramadan-head">
+                        <span>Countdown</span>
+                        <span>Ramadan</span>
+                    </div>
+                    <div className="widget-mini-salah-ramadan-days">134</div>
+                    <div className="widget-mini-salah-ramadan-label">Days to go</div>
+                    <div className="widget-mini-salah-ramadan-track"><span /></div>
                 </div>
             );
         case 'hijri-date':
             return (
-                <div className="widget-mini widget-mini-date">
-                    <div className="widget-mini-calendar-top" />
-                    <div className="widget-mini-calendar-grid" />
+                <div className="widget-mini widget-mini-salah-hijri">
+                    <div className="widget-mini-salah-hijri-head">
+                        <span>Hijri</span>
+                        <span>1447 AH</span>
+                    </div>
+                    <div className="widget-mini-salah-hijri-main">
+                        <div className="widget-mini-salah-hijri-day">21</div>
+                        <div className="widget-mini-salah-hijri-copy">
+                            <span>Sha'ban</span>
+                            <span>Thu, Mar 5</span>
+                        </div>
+                    </div>
                 </div>
             );
         case 'clock':
@@ -195,11 +226,11 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
                         <Quote size={14} strokeWidth={2} />
                         <span className="widget-mini-ayah-word">Daily Ayah</span>
                     </div>
-                    <div className="widget-mini-quote-arabic-lines"><span /><span /></div>
-                    <div className="widget-mini-quote-lines"><span /><span /></div>
+                    <div className="widget-mini-ayah-arabic">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+                    <div className="widget-mini-ayah-translation">In the name of Allah, the Most Gracious, the Most Merciful.</div>
                     <div className="widget-mini-ayah-foot">
                         <span>Al-Fatihah</span>
-                        <span>1:2</span>
+                        <span>1:1</span>
                     </div>
                 </div>
             );
@@ -257,8 +288,15 @@ export const WidgetMiniPreview: React.FC<{ widgetId: WidgetId }> = ({ widgetId }
             );
         case 'qibla-compass':
             return (
-                <div className="widget-mini widget-mini-qibla">
-                    <Compass size={16} strokeWidth={2} />
+                <div className="widget-mini widget-mini-salah-qibla">
+                    <div className="widget-mini-salah-qibla-head">
+                        <span>Qibla</span>
+                        <span>292°</span>
+                    </div>
+                    <div className="widget-mini-salah-qibla-compass">
+                        <Compass size={13} strokeWidth={2} />
+                    </div>
+                    <div className="widget-mini-salah-qibla-label">North-West</div>
                 </div>
             );
         case 'weather':

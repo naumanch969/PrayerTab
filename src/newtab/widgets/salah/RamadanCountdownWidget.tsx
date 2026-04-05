@@ -19,49 +19,49 @@ const RamadanCountdownWidget: React.FC<WidgetComponentProps> = ({ settings, size
 
   if (sizeTier === 'small') {
     return (
-      <div className="ramadan-widget small">
-        <div className="ramadan-val">{inRamadan ? `Day ${h.day}` : `${daysUntilRamadan}d`}</div>
+      <div className="salah-ramadan-widget small">
+        <div className="salah-ramadan-val">{inRamadan ? `Day ${h.day}` : `${daysUntilRamadan}d`}</div>
       </div>
     );
   }
 
   return (
-    <div className={`ramadan-widget ${sizeTier}`}>
-      <div className="ramadan-header">
-        <span className="ramadan-label">{inRamadan ? 'Holy Ramadan' : 'Countdown'}</span>
-        {inRamadan && <span className="ramadan-day-badge">Day {h.day}</span>}
+    <div className={`salah-ramadan-widget ${sizeTier}`}>
+      <div className="salah-ramadan-header">
+        <span className="salah-ramadan-label">{inRamadan ? 'Holy Ramadan' : 'Countdown'}</span>
+        {inRamadan && <span className="salah-ramadan-day-badge">Day {h.day}</span>}
       </div>
 
-      <div className="ramadan-main">
+      <div className="salah-ramadan-main">
         {inRamadan ? (
-          <div className="ramadan-fasting-info">
+          <div className="salah-ramadan-fasting-info">
             {times ? (
               <>
-                <div className="fasting-row">
+                <div className="salah-fasting-row">
                   <span>Sehri Ends</span>
                   <span className="time">{formatTime(times.Fajr)}</span>
                 </div>
-                <div className="fasting-row">
+                <div className="salah-fasting-row">
                   <span>Iftar Starts</span>
                   <span className="time">{formatTime(times.Maghrib)}</span>
                 </div>
               </>
             ) : (
-              <div className="ramadan-msg">Fasting in progress</div>
+              <div className="salah-ramadan-msg">Fasting in progress</div>
             )}
           </div>
         ) : (
-          <div className="ramadan-countdown-box">
-             <div className="days-big">{daysUntilRamadan}</div>
-             <div className="days-label">Days until Ramadan</div>
+          <div className="salah-ramadan-countdown-box">
+             <div className="salah-days-big">{daysUntilRamadan}</div>
+             <div className="salah-days-label">Days until Ramadan</div>
           </div>
         )}
       </div>
 
       {sizeTier === 'large' && !inRamadan && (
-        <div className="ramadan-footer">
-          <div className="ramadan-progress-bg">
-            <div className="ramadan-progress-fill" style={{ width: `${Math.max(0, 100 - (daysUntilRamadan / 355 * 100))}%` }} />
+        <div className="salah-ramadan-footer">
+          <div className="salah-ramadan-progress-bg">
+            <div className="salah-ramadan-progress-fill" style={{ width: `${Math.max(0, 100 - (daysUntilRamadan / 355 * 100))}%` }} />
           </div>
         </div>
       )}

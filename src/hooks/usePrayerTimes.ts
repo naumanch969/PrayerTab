@@ -32,9 +32,25 @@ export function usePrayerTimes(
       return;
     }
 
+    const getPrayerSnapshot = (baseDate: Date) => {
+      const times = calculatePrayerTimes(baseDate, location, method);
+      const upcoming = getNextPrayer(times);
+
+      if (upcoming) {
+        return { times, nextPrayer: upcoming };
+      }
+
+      const tomorrow = new Date(baseDate);
+      tomorrow.setDate(baseDate.getDate() + 1);
+      const tomorrowTimes = calculatePrayerTimes(tomorrow, location, method);
+      return {
+        times,
+        nextPrayer: { name: 'Fajr', time: tomorrowTimes.Fajr },
+      };
+    };
+
     const compute = () => {
-      const times = calculatePrayerTimes(new Date(), location, method);
-      const nextPrayer = getNextPrayer(times);
+      const { times, nextPrayer } = getPrayerSnapshot(new Date());
       setState({
         times,
         nextPrayer,
@@ -51,12 +67,13 @@ export function usePrayerTimes(
         if (!prev.nextPrayer) return prev;
         const stillNext = prev.nextPrayer.time.getTime() > Date.now();
         if (!stillNext) {
-          // A prayer just passed — recompute entirely
-          if (prev.times) {
-            const nextPrayer = getNextPrayer(prev.times);
-            return { ...prev, nextPrayer, countdown: nextPrayer ? formatCountdown(nextPrayer.time) : '--:--:--' };
-          }
-          return prev;
+          const { times, nextPrayer } = getPrayerSnapshot(new Date());
+          return {
+            ...prev,
+            times,
+            nextPrayer,
+            countdown: nextPrayer ? formatCountdown(nextPrayer.time) : '--:--:--',
+          };
         }
         return { ...prev, countdown: formatCountdown(prev.nextPrayer.time) };
       });
