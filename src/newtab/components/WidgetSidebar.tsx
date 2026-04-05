@@ -1,27 +1,10 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CalendarDays, Check, Clock3, Compass, Hourglass, MoonStar, PanelLeftClose, PanelLeftOpen, Quote, SquarePen, Target, Wind } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { WIDGET_NAV, SETTINGS_NAV, WIDGET_LOOKUP } from '../constants';
 import type { WidgetNavId } from '../types';
 import type { WidgetId } from '../../types';
 import { WidgetMiniPreview } from './WidgetMiniPreview';
-
-const WIDGET_ICON_BY_ID = {
-    'prayer-times': Clock3,
-    'next-prayer': Hourglass,
-    'hijri-date': CalendarDays,
-    clock: Clock3,
-    'daily-ayah': Quote,
-    'focus-task': Target,
-    'dhikr-counter': Wind,
-    'prayer-streak': Target,
-    'qibla-compass': Compass,
-    weather: Wind,
-    tasbeeh: MoonStar,
-    'ramadan-countdown': MoonStar,
-    bookmarks: SquarePen,
-    note: SquarePen,
-} as const;
 
 interface WidgetSidebarProps {
     isOpen: boolean;
@@ -143,7 +126,6 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                                 {activeWidgets.map((widgetId) => {
                                     const widget = WIDGET_LOOKUP[widgetId];
                                     if (!widget) return null;
-                                    const Icon = WIDGET_ICON_BY_ID[widget.id];
 
                                     const added = addedWidgets.includes(widgetId);
                                     return (
@@ -155,22 +137,13 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                                             disabled={added}
                                             aria-label={`${added ? 'Added' : 'Add'} ${widget.name}`}
                                         >
-                                            <div className="widget-option-head">
-                                                <span className="widget-option-icon-wrap" aria-hidden="true">
-                                                    <Icon size={14} strokeWidth={2.3} />
-                                                </span>
-                                                <span className={`widget-option-add-mark ${added ? 'added' : ''}`} aria-hidden="true">
-                                                    {added ? <Check size={12} strokeWidth={2.4} /> : '+'}
-                                                </span>
-                                            </div>
-
-                                            <div className="widget-option-copy">
-                                                <div className="widget-option-name">{widget.name}</div>
-                                                <div className="widget-option-sub">{widget.preview}</div>
-                                            </div>
-
-                                            <div className="widget-option-mini-wrap">
+                                            <div className={`widget-option-preview ${added ? 'added' : ''}`} aria-hidden="true">
+                                                {added && <span className="widget-option-added-check">✓</span>}
                                                 <WidgetMiniPreview widgetId={widget.id} />
+                                            </div>
+
+                                            <div className="widget-option-title-wrap">
+                                                <div className="widget-option-name">{widget.name}</div>
                                             </div>
                                         </button>
                                     );

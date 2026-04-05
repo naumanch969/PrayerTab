@@ -9,8 +9,10 @@ import type { WidgetRuntimeData } from './widgets/types';
 import { NAV_WIDGETS } from './constants';
 import { clampLayoutToViewport, defaultLayoutForIndex, getDailyBackground, normalizeLayout } from './utils';
 import type { WidgetNavId } from './types';
+import { getBackgroundStyle, getThemeVariables } from './viewModel';
 
 import { useWidgetInteraction } from './hooks/useWidgetInteraction';
+import { useWidgetEditHistory } from './hooks/useWidgetEditHistory';
 import { WidgetCard } from './components/WidgetCard';
 import { WidgetSidebar } from './components/WidgetSidebar';
 
@@ -24,28 +26,13 @@ const NewTab: React.FC = () => {
     const [activeNav, setActiveNav] = useState<WidgetNavId | null>('salah');
     const [activeNavTop, setActiveNavTop] = useState(0);
     const [activeWidgetSettingsId, setActiveWidgetSettingsId] = useState<WidgetId | null>(null);
-    const [undoStack, setUndoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
-    const [redoStack, setRedoStack] = useState<Array<Partial<Record<WidgetId, WidgetLayout>>>>([]);
 
     const promptSeenPersisted = useRef(false);
     const settingsRef = useRef<UserSettings | null>(null);
 
     const defaultBg = useMemo(() => getDailyBackground(new Date()), []);
 
-    const bgStyle = useMemo(() => {
-        const source = storage.settings?.backgroundSource;
-        const bgVal = storage.settings?.background;
-
-        if (source === 'solid' && bgVal) {
-            return { backgroundColor: bgVal };
-        }
-        if (source === 'gradient' && bgVal) {
-            return { backgroundImage: bgVal };
-        }
-        
-        const urlToUse = bgVal || defaultBg;
-        return { backgroundImage: `url(${urlToUse})` };
-    }, [storage.settings, defaultBg]);
+    const bgStyle = useMemo(() => getBackgroundStyle(storage.settings, defaultBg), [storage.settings, defaultBg]);
 
     const overlayOpacity = storage.settings?.backgroundOverlayOpacity ?? 0;
 
@@ -81,11 +68,13 @@ const NewTab: React.FC = () => {
         void storage.updateSettings(nextSettings);
     };
 
+    const isEditEnabled = isEditMode && sidebarOpen;
+
     const { layoutDraft, setLayoutDraft, startInteraction, activeInteraction } = useWidgetInteraction(
-        isEditMode,
+        isEditEnabled,
         storage.settings?.widgetLayouts ?? {},
         (layouts) => {
-            if (isEditMode) {
+            if (isEditEnabled) {
                 pushUndoSnapshot();
             }
             if (settingsRef.current) {
@@ -97,27 +86,11 @@ const NewTab: React.FC = () => {
         }
     );
 
-    const cloneLayouts = (layouts: Partial<Record<WidgetId, WidgetLayout>>) => {
-        const cloned: Partial<Record<WidgetId, WidgetLayout>> = {};
-        Object.entries(layouts).forEach(([widgetId, layout]) => {
-            if (!layout) return;
-            cloned[widgetId as WidgetId] = { ...layout };
-        });
-        return cloned;
-    };
-
-    const pushUndoSnapshot = () => {
-        if (!isEditMode) return;
-        setUndoStack((prev) => [...prev, cloneLayouts(layoutDraft)]);
-        setRedoStack([]);
-    };
-
     const enterEditMode = () => {
         if (!settings) return;
-        setUndoStack([]);
-        setRedoStack([]);
-        setIsEditMode(true);
+        resetHistory();
         setSidebarOpen(true);
+        setIsEditMode(true);
     };
 
     const exitEditMode = () => {
@@ -125,66 +98,21 @@ const NewTab: React.FC = () => {
         setActiveWidgetSettingsId(null);
     };
 
-    const undoEdit = () => {
-        if (!isEditMode) return;
-        setUndoStack((prev) => {
-            const last = prev[prev.length - 1];
-            if (!last) return prev;
-
-            setRedoStack((redoPrev) => [...redoPrev, cloneLayouts(layoutDraftRef.current)]);
-            setLayoutDraft(last);
-            persistSettings({ widgetLayouts: last as Record<WidgetId, WidgetLayout> });
-            return prev.slice(0, -1);
-        });
-    };
-
-    const redoEdit = () => {
-        if (!isEditMode) return;
-        setRedoStack((prev) => {
-            const last = prev[prev.length - 1];
-            if (!last) return prev;
-
-            setUndoStack((undoPrev) => [...undoPrev, cloneLayouts(layoutDraftRef.current)]);
-            setLayoutDraft(last);
-            persistSettings({ widgetLayouts: last as Record<WidgetId, WidgetLayout> });
-            return prev.slice(0, -1);
-        });
-    };
-
-    const finishEditMode = () => {
-        setUndoStack([]);
-        setRedoStack([]);
-        exitEditMode();
-    };
+    const { pushUndoSnapshot, resetHistory, finishEditMode } = useWidgetEditHistory({
+        isEditMode: isEditEnabled,
+        layoutDraft,
+        setLayoutDraft,
+        persistLayouts: (layouts) => {
+            persistSettings({ widgetLayouts: layouts as Record<WidgetId, WidgetLayout> });
+        },
+        onExitEditMode: exitEditMode,
+    });
 
     useEffect(() => {
+        if (sidebarOpen) return;
         if (!isEditMode) return;
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                event.preventDefault();
-                finishEditMode();
-                return;
-            }
-
-            const isUndo = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey;
-            const isRedo = (event.ctrlKey || event.metaKey) && (
-                (event.shiftKey && event.key.toLowerCase() === 'z') || 
-                (event.key.toLowerCase() === 'y')
-            );
-
-            if (isUndo) {
-                event.preventDefault();
-                undoEdit();
-            } else if (isRedo) {
-                event.preventDefault();
-                redoEdit();
-            }
-        };
-
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
-    }, [isEditMode, undoStack, redoStack, layoutDraft]);
+        finishEditMode();
+    }, [sidebarOpen, isEditMode, finishEditMode]);
 
     const layoutDraftRef = useRef(layoutDraft);
 
@@ -303,7 +231,7 @@ const NewTab: React.FC = () => {
     const addWidget = (widgetId: WidgetId) => {
         if (addedWidgets.includes(widgetId)) return;
 
-        if (isEditMode) {
+        if (isEditEnabled) {
             pushUndoSnapshot();
         }
 
@@ -321,7 +249,7 @@ const NewTab: React.FC = () => {
     };
 
     const removeWidget = (widgetId: WidgetId) => {
-        if (isEditMode) {
+        if (isEditEnabled) {
             pushUndoSnapshot();
         }
 
@@ -355,13 +283,7 @@ const NewTab: React.FC = () => {
             className="nt-root"
             data-theme={settings.themeMode || 'glass'}
             data-font={settings.fontFamily || 'inter'}
-            style={{
-                '--theme-accent': settings.themeAccent || '#d4a843',
-                '--gold': settings.themeAccent || '#d4a843',
-                '--gold-text': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 68%, white)`,
-                '--gold-dim': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 15%, transparent)`,
-                '--gold-glow': `color-mix(in srgb, ${settings.themeAccent || '#d4a843'} 33%, transparent)`,
-            } as React.CSSProperties}
+            style={getThemeVariables(settings)}
         >
             <div className="nt-bg" style={bgStyle} />
             <div className="nt-overlay" style={{ opacity: overlayOpacity / 100 }} />
@@ -382,14 +304,14 @@ const NewTab: React.FC = () => {
             </button>
 
             <div className="widget-canvas" aria-label="Widget canvas">
-                {isEditMode && <div className="canvas-grid-overlay" />}
+                {isEditEnabled && <div className="canvas-grid-overlay" />}
 
                 {addedWidgets.map((widgetId, index) => (
                     <WidgetCard
                         key={widgetId}
                         index={index}
                         widgetId={widgetId}
-                        isEditMode={isEditMode}
+                        isEditMode={isEditEnabled}
                         layout={getWidgetLayoutFor(widgetId, index)}
                         displayMode={settings.widgetPreferences[widgetId]?.displayMode ?? 'auto'}
                         onDragStart={(wId, idx, e) => startInteraction('drag', wId, e, getWidgetLayoutFor(wId, idx))}
@@ -415,7 +337,7 @@ const NewTab: React.FC = () => {
                 >
                     <Plus size={18} strokeWidth={2.3} />
                 </button>
-                {!isEditMode && (
+                    {!isEditEnabled && (
                     <button
                         className="widget-mini-btn"
                         aria-label="Enter edit mode"
@@ -429,11 +351,19 @@ const NewTab: React.FC = () => {
 
             <WidgetSidebar
                 isOpen={sidebarOpen}
-                isEditMode={isEditMode}
+                isEditMode={isEditEnabled}
                 isCollapsed={sidebarCollapsed}
                 addedWidgets={addedWidgets}
                 activeWidgets={activeWidgets}
-                onToggleSidebar={() => setSidebarOpen((current) => !current)}
+                onToggleSidebar={() => {
+                    setSidebarOpen((current) => {
+                        const next = !current;
+                        if (!next && isEditMode) {
+                            finishEditMode();
+                        }
+                        return next;
+                    });
+                }}
                 onToggleCollapsed={() => setSidebarCollapsed((current) => !current)}
                 onHoverExpandStart={() => {
                     if (sidebarCollapsed) {
@@ -450,7 +380,7 @@ const NewTab: React.FC = () => {
                 }}
                 onClearActiveNav={() => setActiveNav(null)}
                 onToggleEditMode={() => {
-                    if (isEditMode) {
+                    if (isEditEnabled) {
                         finishEditMode();
                     } else {
                         enterEditMode();
