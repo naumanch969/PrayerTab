@@ -270,6 +270,14 @@ const NewTab: React.FC = () => {
         });
     };
 
+    const toggleWidget = (widgetId: WidgetId) => {
+        if (addedWidgets.includes(widgetId)) {
+            removeWidget(widgetId);
+            return;
+        }
+        addWidget(widgetId);
+    };
+
     const setWidgetDisplayMode = (widgetId: WidgetId, displayMode: WidgetDisplayMode) => {
         const nextPreferences = {
             ...settings.widgetPreferences,
@@ -357,7 +365,7 @@ const NewTab: React.FC = () => {
                     }
                 }}
                 onOpenSettings={(tabId) => setActiveSettingsTab(tabId)}
-                onAddWidget={addWidget}
+                onToggleWidget={toggleWidget}
                 activeNav={activeNav}
                 activeNavTop={activeNavTop}
                 onActiveNavChange={(navId, top) => {

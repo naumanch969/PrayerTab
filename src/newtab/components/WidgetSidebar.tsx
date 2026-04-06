@@ -16,7 +16,7 @@ interface WidgetSidebarProps {
     onToggleCollapsed: () => void;
     onHoverExpandStart: () => void;
     onOpenSettings: (tabId: string) => void;
-    onAddWidget: (widgetId: WidgetId) => void;
+    onToggleWidget: (widgetId: WidgetId) => void;
     activeNav: WidgetNavId | null;
     activeNavTop: number;
     onActiveNavChange: (navId: WidgetNavId, top: number) => void;
@@ -24,7 +24,7 @@ interface WidgetSidebarProps {
     onToggleEditMode: () => void;
 }
 
-export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onHoverExpandStart, onOpenSettings, onAddWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav, onToggleEditMode }) => {
+export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode, isCollapsed, addedWidgets, activeWidgets, onToggleCollapsed, onHoverExpandStart, onOpenSettings, onToggleWidget, activeNav, activeNavTop, onActiveNavChange, onClearActiveNav, onToggleEditMode }) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -133,9 +133,8 @@ export const WidgetSidebar: React.FC<WidgetSidebarProps> = ({ isOpen, isEditMode
                                             key={widget.id}
                                             type="button"
                                             className={`widget-option-card ${added ? 'added' : ''}`}
-                                            onClick={() => onAddWidget(widget.id)}
-                                            disabled={added}
-                                            aria-label={`${added ? 'Added' : 'Add'} ${widget.name}`}
+                                            onClick={() => onToggleWidget(widget.id)}
+                                            aria-label={`${added ? 'Remove' : 'Add'} ${widget.name}`}
                                         >
                                             <div className={`widget-option-preview ${added ? 'added' : ''}`} aria-hidden="true">
                                                 {added && <span className="widget-option-added-check">✓</span>}

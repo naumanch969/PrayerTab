@@ -33,6 +33,12 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
     if (!widget) return null; // Safe guard against corrupt memory or unknown widgets
 
     const handlePointerDown = (event: React.PointerEvent<HTMLElement>) => {
+        const target = event.target as HTMLElement;
+        // Do not initiate widget drag/selection when user interacts with widget controls or form elements.
+        if (target.closest('button, input, textarea, select, a, [role="button"], [contenteditable="true"]')) {
+            return;
+        }
+
         if (!isEditMode && event.pointerType === 'touch') {
             pointerDownRef.current = { x: event.clientX, y: event.clientY };
             longPressTimer.current = setTimeout(() => {
@@ -105,7 +111,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
                         onPointerDown={(event) => event.stopPropagation()}
                         onClick={() => onToggleSettings(widgetId)}
                     >
-                        <Settings2 size={12} strokeWidth={1.9} />
+                        <Settings2 size={14} strokeWidth={2} />
                     </button>
                     <button
                         className="canvas-widget-control-btn danger"
@@ -116,7 +122,7 @@ export const WidgetCard: React.FC<WidgetCardProps> = ({ widgetId, isEditMode, la
                             onRemove(widgetId);
                         }}
                     >
-                        <Trash2 size={12} strokeWidth={2} />
+                        <Trash2 size={14} strokeWidth={2} />
                     </button>
                 </div>
             )}

@@ -1172,6 +1172,7 @@
   transform: translateY(-2px);
   pointer-events: none;
   transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1000;
 }
 
 .canvas-widget.edit-mode:hover .canvas-widget-controls,
@@ -1182,8 +1183,8 @@
 }
 
 .canvas-widget-control-btn {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   background: rgba(0, 0, 0, 0.64);
@@ -1194,6 +1195,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 1001;
 }
 
 .canvas-widget-control-btn:hover {
